@@ -1,0 +1,8 @@
+#+TITLE:README
+
+* 简介
+NNW is a Neko Note Writer is a Network Neko Writer is a Neo Neko Writer is a New Neo Writer is NNW. 
+
+NNW是一个使用Guile编写的轻量级、标签化的知识管理引擎，旨在方便用户使用多类不同的编辑器前端高效编辑和记录笔记，通过标签索引的方式管理文本及知识库数据，方便备份和导出。
+
+警告：目前NNW处于非常早期的实验性阶段，不建议用于生产环境。

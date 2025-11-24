@@ -1,0 +1,44 @@
+#+TITLE: 架构思路
+* 存储层
+设计哲学：
+一切皆为扁平Block，弱化层级、文档、文件树。
+
+底层真实的文件数据，全部用S表达式的格式交给存储后端（视情况编码解码）并存储（默认是文件系统，后期可扩展数据库），支持多存储后端并行存储。
+
+格式可类似下面这样：
+#+begin_src scheme
+  (block
+   (id 123)
+   (parent 456)
+   (descrption "这段讲的是关于知识锁的信息。")
+   (source "知识锁的本质是信息差…")
+   (type text)
+   (tags (game design))
+   (order 0)
+   (created 2025-11-24)
+   (modified 2025-11-24))
+#+end_src
+
+#+begin_src scheme
+  (block
+   (id 456)
+   (parent #f)
+   (descrption "关于知识锁")
+   (source "知识锁")
+   (type heading)
+   (tags (game design))
+   (order 0)
+   (created 2025-11-24)
+   (modified 2025-11-24))
+#+end_src
+
+* 组织层
+文档并不是存储结构，而是方便输入、编辑、输出的临时视图。
+
+通过标签和视图，可以决定如何检测文档的修改、以及如何输出文档。
+
+可以通过自定义视图的方式更改块的排序方式，做出一些更高级的块操作。
+
+默认视图的行为：
+默认结合order和level对block进行排序，level和order都相同的情况则会按修改时间戳排序。
+

@@ -1,0 +1,11 @@
+#+TITLE:README
+
+* Introduction
+| English | [[file:READMECN.org][中文]] |
+
+NNW is a Neko Note Writer, a Network Neko Writer, a Neo Neko Writer, a New Neo Writer is NNW.
+
+NNW is a lightweight, tag-based knowledge-management engine written in Guile. It is designed to help users efficiently edit and record notes through various types of editor frontends, managing text and knowledge-base data through tag indexing, and making backup and export easy.
+
+Warning: NNW is currently in a very early experimental stage and is not recommended for production use.
+
