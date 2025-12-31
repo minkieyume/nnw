@@ -4,7 +4,7 @@
 
 (test-begin "block-tests")
 
-;; 测试成功创建block
+;; Test successful block creation
 (test-group "make-block success cases"
   (let ((block (make-block
                 #:description "Test block"
@@ -24,7 +24,7 @@
     (test-assert "id is generated" (string? (block-id block)))
     (test-assert "id is non-empty" (> (string-length (block-id block)) 0))))
 
-;; 测试ID生成的一致性
+;; Test ID generation consistency
 (test-group "ID generation consistency"
   (let* ((block1 (make-block
                   #:description "Block 1"
@@ -45,7 +45,7 @@
                 (block-id block1)
                 (block-id block2))))
 
-;; 测试不同source产生不同ID
+;; Test different sources produce different IDs
 (test-group "ID generation uniqueness"
   (let* ((block1 (make-block
                   #:description "Block 1"
@@ -65,7 +65,7 @@
     (test-assert "different sources produce different IDs"
                  (not (string=? (block-id block1) (block-id block2))))))
 
-;; 测试不同tags产生不同ID
+;; Test different tags produce different IDs
 (test-group "ID generation with different tags"
   (let* ((block1 (make-block
                   #:description "Block 1"
@@ -85,7 +85,7 @@
     (test-assert "different tags produce different IDs"
                  (not (string=? (block-id block1) (block-id block2))))))
 
-;; 测试空tags列表
+;; Test empty tags list
 (test-group "empty tags list"
   (let ((block (make-block
                 #:description "Block with no tags"
@@ -99,7 +99,7 @@
     (test-equal "tags are empty" '() (block-tags block))
     (test-assert "id is still generated" (string? (block-id block)))))
 
-;; 测试类型检查：description必须是字符串
+;; Test type validation: description must be a string
 (test-group "type validation - description"
   (test-error "description must be string"
               (make-block
@@ -110,7 +110,7 @@
                #:created "2024-01-01"
                #:modified "2024-01-01")))
 
-;; 测试类型检查：source必须是字符串
+;; Test type validation: source must be a string
 (test-group "type validation - source"
   (test-error "source must be string"
               (make-block
@@ -121,7 +121,7 @@
                #:created "2024-01-01"
                #:modified "2024-01-01")))
 
-;; 测试类型检查：type必须是字符串
+;; Test type validation: type must be a string
 (test-group "type validation - type"
   (test-error "type must be string"
               (make-block
@@ -132,7 +132,7 @@
                #:created "2024-01-01"
                #:modified "2024-01-01")))
 
-;; 测试类型检查：tags必须是字符串列表
+;; Test type validation: tags must be a list of strings
 (test-group "type validation - tags"
   (test-error "tags must be list of strings"
               (make-block
@@ -152,7 +152,7 @@
                #:created "2024-01-01"
                #:modified "2024-01-01")))
 
-;; 测试类型检查：created必须是字符串
+;; Test type validation: created must be a string
 (test-group "type validation - created"
   (test-error "created must be string"
               (make-block
@@ -163,7 +163,7 @@
                #:created 20240101
                #:modified "2024-01-01")))
 
-;; 测试类型检查：modified必须是字符串
+;; Test type validation: modified must be a string
 (test-group "type validation - modified"
   (test-error "modified must be string"
               (make-block
