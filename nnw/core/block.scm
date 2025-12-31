@@ -3,16 +3,24 @@
   #:use-module (uuid generate)
   #:use-module (srfi srfi-1)
   #:use-module (gcrypt hash)
-  #:export (<block>))
+  #:export (<block>
+            make-block
+            block-id
+            block-description
+            block-source
+            block-type
+            block-tags
+            block-created
+            block-modified))
 
 (define-class <block> ()
-  id
-  descrption
-  source
-  type
-  tags
-  created
-  modified)
+  (id #:init-keyword #:id #:getter block-id)
+  (description #:init-keyword #:description #:getter block-description)
+  (source #:init-keyword #:source #:getter block-source)
+  (type #:init-keyword #:type #:getter block-type)
+  (tags #:init-keyword #:tags #:getter block-tags)
+  (created #:init-keyword #:created #:getter block-created)
+  (modified #:init-keyword #:modified #:getter block-modified))
 
 (define (list-of-string? lst)
   (and (list? lst)
@@ -28,10 +36,16 @@
 		     modified)
   ;; Type Checks
   (for-each
-    (lambda (type)
-      (unless (string? (eval type (interaction-environment)))
-	(error (symbol->string type) " must be String!"))) 
-    '(description source type created modified))
+    (lambda (param-pair)
+      (let ((name (car param-pair))
+            (value (cdr param-pair)))
+        (unless (string? value)
+          (error (symbol->string name) " must be String!"))))
+    `((description . ,description)
+      (source . ,source)
+      (type . ,type)
+      (created . ,created)
+      (modified . ,modified)))
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
 
