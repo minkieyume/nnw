@@ -1,4 +1,5 @@
-(use-modules (nnw core block)
+(use-modules (oop goops)
+	     (nnw core block)
              (srfi srfi-64))
 
 (test-begin "block-tests")
