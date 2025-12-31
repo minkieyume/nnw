@@ -29,7 +29,6 @@
        (every string? lst)))
 
 ;; ID Calculation: Compute the SHA-256 hash value from a string concatenated from the source and all tags.
-;; Convert bytevector to hexadecimal string representation
 (define* (make-block #:key
 		     description
 		     source
