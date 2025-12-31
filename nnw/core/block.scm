@@ -1,7 +1,9 @@
 (define-module (nnw core block)
   #:use-module (oop goops)
   #:use-module (uuid generate)
-  #:use-module (srfi srfi-1)
+  #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 iconv)
+  #:use-module (srfi srfi-1)  
   #:use-module (gcrypt hash)
   #:export (<block>
             make-block
@@ -26,7 +28,8 @@
   (and (list? lst)
        (every string? lst)))
 
-;; 计算ID：基于source和所有tags拼成的字符串计算SHA-256哈希值
+;; ID Calculation: Compute the SHA-256 hash value from a string concatenated from the source and all tags.
+;; TODO 修复 hash-hex 无法正常转换的问题，我希望将bytevector转成可读的格式，顺便修改代码以确保能通过单元测试。
 (define* (make-block #:key
 		     description
 		     source
@@ -49,11 +52,11 @@
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
 
-  ;; 生成ID
+  ;; Generate ID
   (let* ((tags-str (string-join tags ","))
          (combined-str (string-append source tags-str))
          (hash-bytes (sha256 (string->utf8 combined-str)))
-         (hash-hex (bytevector->base16-string hash-bytes))
+         (hash-hex (bytevector->string hash-bytes "utf-8"))
          (id hash-hex))
 
     ;; Make Block
