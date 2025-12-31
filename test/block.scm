@@ -2,7 +2,7 @@
 	     (nnw core block)
              (srfi srfi-64))
 
-(test-begin "block-tests")
+(test-begin "logs/block-tests")
 
 ;; Test successful block creation
 (test-group "make-block success cases"
@@ -174,4 +174,4 @@
                #:created "2024-01-01"
                #:modified 20240101)))
 
-(test-end "block-tests")
+(test-end "logs/block-tests")
