@@ -2,6 +2,7 @@
   #:use-module (oop goops)
   #:use-module (uuid generate)
   #:use-module (srfi srfi-1)
+  #:use-module (gcrypt hash)
   #:export (<block>))
 
 (define-class <block> ()
@@ -17,7 +18,7 @@
   (and (list? lst)
        (every string? lst)))
 
-;;TODO 将id赋值为：基于source和所有tags拼成的字符串计算的哈希值。
+;; 计算ID：基于source和所有tags拼成的字符串计算SHA-256哈希值
 (define* (make-block #:key
 		     description
 		     source
@@ -34,11 +35,19 @@
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
 
-  ;; Make Block
-  (make <block>
-    #:id ()
-    #:description description
-    #:source source
-    #:type type
-    #:created created
-    #:modified modified))
+  ;; 生成ID
+  (let* ((tags-str (string-join tags ","))
+         (combined-str (string-append source tags-str))
+         (hash-bytes (sha256 (string->utf8 combined-str)))
+         (hash-hex (bytevector->base16-string hash-bytes))
+         (id hash-hex))
+
+    ;; Make Block
+    (make <block>
+      #:id id
+      #:description description
+      #:source source
+      #:type type
+      #:tags tags
+      #:created created
+      #:modified modified)))
