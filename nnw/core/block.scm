@@ -29,7 +29,7 @@
        (every string? lst)))
 
 ;; ID Calculation: Compute the SHA-256 hash value from a string concatenated from the source and all tags.
-;; TODO 修复 hash-hex 无法正常转换的问题，我希望将bytevector转成可读的格式，顺便修改代码以确保能通过单元测试。
+;; Convert bytevector to hexadecimal string representation
 (define* (make-block #:key
 		     description
 		     source
@@ -56,7 +56,12 @@
   (let* ((tags-str (string-join tags ","))
          (combined-str (string-append source tags-str))
          (hash-bytes (sha256 (string->utf8 combined-str)))
-         (hash-hex (bytevector->string hash-bytes "utf-8"))
+         ;; Convert bytevector to hexadecimal string representation
+         (hash-hex (string-join
+                    (map (lambda (byte)
+                           (format #f "~2,'0x" byte))
+                         (bytevector->u8-list hash-bytes))
+                    ""))
          (id hash-hex))
 
     ;; Make Block
