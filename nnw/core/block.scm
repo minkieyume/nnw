@@ -33,13 +33,20 @@
 
 ;; Type checking and initialization for block
 (define-method (initialize (block <block>) initargs)
-  (let-keywords initargs #f ((description #f)
+  (let-keywords initargs #f ((id #f)
+			     (description #f)
                              (source #f)
                              (type #f)
                              (tags #f)
                              (created #f)
                              (modified #f)
                              (metadata '()))
+    
+    ;; Validate id
+    (when id
+      (unless (uuid-v4-string? id)
+        (error "view id must be a valid UUID v4 string" id)))
+    
     ;; Validate description
     (unless description
       (error "block description is required"))

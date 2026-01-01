@@ -39,7 +39,7 @@
 			     (name #f)
                              (metadata '())
                              (content '()))
-    ;; Validate name
+    ;; Validate id
     (when id
       (unless (uuid-v4-string? id)
         (error "view id must be a valid UUID v4 string" id)))
