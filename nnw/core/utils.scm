@@ -1,5 +1,6 @@
 (define-module (nnw core utils)
   #:use-module (srfi srfi-1)
+  #:use-module (ice-9 regex)
   #:export (list-of-string?
 	    uuid-v4-string?))
 

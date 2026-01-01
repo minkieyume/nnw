@@ -34,16 +34,16 @@
               content)))
 
 ;; Type checking for initialize method
-(define-method (initialize (view <view>) initargs)
-  ;; Validate custom id if provided
-  (let-keywords initargs #f ((id #f))
-    (when id
-      (unless (uuid-v4-string? id)
-        (error "view id must be a valid UUID v4 string" id))))
-  
-  (let-keywords initargs #f ((name #f)
+(define-method (initialize (view <view>) initargs)  
+  (let-keywords initargs #f ((id #f)
+			     (name #f)
                              (metadata '())
                              (content '()))
+    ;; Validate name
+    (when id
+      (unless (uuid-v4-string? id)
+        (error "view id must be a valid UUID v4 string" id)))
+    
     ;; Validate name
     (unless name
       (error "view name is required"))
