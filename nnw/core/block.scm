@@ -1,9 +1,9 @@
 (define-module (nnw core block)
+  #:use-module (nnw core utils)
   #:use-module (oop goops)
   #:use-module (uuid generate)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 iconv)
-  #:use-module (srfi srfi-1)  
   #:use-module (gcrypt hash)
   #:export (<block>
             make-block
@@ -25,12 +25,9 @@
   (type #:init-keyword #:type #:getter block-type)
   (tags #:init-keyword #:tags #:getter block-tags)
   (hash #:init-keyword #:hash #:getter block-hash)
+  (metadata #:init-keyword #:metadata #:getter view-metadata)
   (created #:init-keyword #:created #:getter block-created)
   (modified #:init-keyword #:modified #:getter block-modified))
-
-(define (list-of-string? lst)
-  (and (list? lst)
-       (every string? lst)))
 
 ;; ID Calculation: Compute the SHA-256 hash value from a string concatenated from the source and all tags.
 (define* (make-block #:key
@@ -39,7 +36,8 @@
 		     type
 		     tags
 		     created
-		     modified)
+		     modified
+		     (metadata '()))
   ;; Type Checks
   (for-each
     (lambda (param-pair)
@@ -54,6 +52,8 @@
       (modified . ,modified)))
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
+  (unless (list? metadata)
+    (error (symbol->string 'metadata) " must be a Alist"))
 
   ;; Generate Hash
   (let* ((tags-str (string-join tags ","))
@@ -73,5 +73,6 @@
       #:type type
       #:tags tags
       #:hash hash-hex
+      #:metadata metadata
       #:created created
       #:modified modified)))

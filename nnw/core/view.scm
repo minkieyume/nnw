@@ -12,7 +12,7 @@
   (id #:init-keyword #:id
       #:init-thunk generate-string-uuid
       #:getter view-id)
-  (name #:init-keyword #:description #:getter view-name)
+  (name #:init-keyword #:name #:getter view-name)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter view-metadata)
   (content #:init-keyword #:content #:init-value '() #:getter view-content))
 
