@@ -31,6 +31,7 @@
   (modified #:init-keyword #:modified #:getter block-modified))
 
 ;; ID Calculation: Compute the SHA-256 hash value from a string concatenated from the source and all tags.
+;; TODO 参考view的格式将make-block方法重构为initialize方法，并修改可能波及到的单元测试。
 (define* (make-block #:key
 		     description
 		     source
