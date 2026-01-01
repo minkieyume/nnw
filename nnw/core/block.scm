@@ -4,6 +4,7 @@
   #:use-module (uuid generate)
   #:use-module (rnrs bytevectors)
   #:use-module (ice-9 iconv)
+  #:use-module (srfi srfi-1)
   #:use-module (gcrypt hash)
   #:export (<block>
             make-block
@@ -52,7 +53,8 @@
       (modified . ,modified)))
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
-  (unless (list? metadata)
+  (unless (and (list? metadata)
+	       (every (lambda (key) (string? (car key))) metadata))
     (error (symbol->string 'metadata) " must be a Alist"))
 
   ;; Generate Hash
