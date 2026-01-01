@@ -34,8 +34,13 @@
               content)))
 
 ;; Type checking for initialize method
-;; TODO 为initialize添加自定义id匹配。
 (define-method (initialize (view <view>) initargs)
+  ;; Validate custom id if provided
+  (let-keywords initargs #f ((id #f))
+    (when id
+      (unless (uuid-v4-string? id)
+        (error "view id must be a valid UUID v4 string" id))))
+  
   (let-keywords initargs #f ((name #f)
                              (metadata '())
                              (content '()))
