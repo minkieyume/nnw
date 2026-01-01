@@ -34,6 +34,7 @@
               content)))
 
 ;; Type checking for initialize method
+;; TODO 为initialize添加自定义id匹配。
 (define-method (initialize (view <view>) initargs)
   (let-keywords initargs #f ((name #f)
                              (metadata '())
