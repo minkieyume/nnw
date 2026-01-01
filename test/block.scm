@@ -24,65 +24,24 @@
     (test-assert "id is generated" (string? (block-id block)))
     (test-assert "id is non-empty" (> (string-length (block-id block)) 0))))
 
-;; Test ID generation consistency
-(test-group "ID generation consistency"
-  (let* ((block1 (make-block
-                  #:description "Block 1"
-                  #:source "same-source"
-                  #:type "text"
-                  #:tags '("tag1" "tag2")
-                  #:created "2024-01-01"
-                  #:modified "2024-01-01"))
-         (block2 (make-block
-                  #:description "Block 2"
-                  #:source "same-source"
-                  #:type "text"
-                  #:tags '("tag1" "tag2")
-                  #:created "2024-01-02"
-                  #:modified "2024-01-02")))
-    
-    (test-equal "same source and tags produce same ID"
-                (block-id block1)
-                (block-id block2))))
-
-;; Test different sources produce different IDs
+;; Test same sources produce different IDs
 (test-group "ID generation uniqueness"
   (let* ((block1 (make-block
                   #:description "Block 1"
-                  #:source "source1"
+                  #:source "source"
                   #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01"))
          (block2 (make-block
                   #:description "Block 2"
-                  #:source "source2"
+                  #:source "source"
                   #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01")))
     
     (test-assert "different sources produce different IDs"
-                 (not (string=? (block-id block1) (block-id block2))))))
-
-;; Test different tags produce different IDs
-(test-group "ID generation with different tags"
-  (let* ((block1 (make-block
-                  #:description "Block 1"
-                  #:source "same-source"
-                  #:type "text"
-                  #:tags '("tag1" "tag2")
-                  #:created "2024-01-01"
-                  #:modified "2024-01-01"))
-         (block2 (make-block
-                  #:description "Block 2"
-                  #:source "same-source"
-                  #:type "text"
-                  #:tags '("tag1" "tag3")
-                  #:created "2024-01-01"
-                  #:modified "2024-01-01")))
-    
-    (test-assert "different tags produce different IDs"
                  (not (string=? (block-id block1) (block-id block2))))))
 
 ;; Test empty tags list
