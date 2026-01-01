@@ -15,7 +15,8 @@
             block-tags
             block-hash
             block-created
-            block-modified))
+            block-modified
+	    block-metadata))
 
 (define-class <block> ()
   (id #:init-keyword #:id 

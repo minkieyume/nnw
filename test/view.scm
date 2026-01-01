@@ -1,5 +1,6 @@
 (use-modules (oop goops)
 	     (nnw core view)
+	     (nnw core utils)
              (srfi srfi-64))
 
 (test-begin "logs/view-tests")
