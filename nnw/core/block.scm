@@ -18,7 +18,7 @@
 
 (define-class <block> ()
   (id #:init-keyword #:id 
-      #:init-thunk (lambda () (generate-string-uuid))
+      #:init-thunk generate-string-uuid
       #:getter block-id)
   (description #:init-keyword #:description #:getter block-description)
   (source #:init-keyword #:source #:getter block-source)
