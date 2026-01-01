@@ -12,15 +12,19 @@
             block-source
             block-type
             block-tags
+            block-hash
             block-created
             block-modified))
 
 (define-class <block> ()
-  (id #:init-keyword #:id #:getter block-id)
+  (id #:init-keyword #:id 
+      #:init-thunk (lambda () (generate-string-uuid))
+      #:getter block-id)
   (description #:init-keyword #:description #:getter block-description)
   (source #:init-keyword #:source #:getter block-source)
   (type #:init-keyword #:type #:getter block-type)
   (tags #:init-keyword #:tags #:getter block-tags)
+  (hash #:init-keyword #:hash #:getter block-hash)
   (created #:init-keyword #:created #:getter block-created)
   (modified #:init-keyword #:modified #:getter block-modified))
 
@@ -51,7 +55,7 @@
   (unless (list-of-string? tags)
     (error (symbol->string 'tags) " must be a List of String"))
 
-  ;; Generate ID
+  ;; Generate Hash
   (let* ((tags-str (string-join tags ","))
          (combined-str (string-append source tags-str))
          (hash-bytes (sha256 (string->utf8 combined-str)))
@@ -60,15 +64,14 @@
                     (map (lambda (byte)
                            (format #f "~2,'0x" byte))
                          (bytevector->u8-list hash-bytes))
-                    ""))
-         (id hash-hex))
+                    "")))
 
     ;; Make Block
     (make <block>
-      #:id id
       #:description description
       #:source source
       #:type type
       #:tags tags
+      #:hash hash-hex
       #:created created
       #:modified modified)))
