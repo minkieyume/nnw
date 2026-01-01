@@ -2,7 +2,7 @@
 	     (nnw core view)
              (srfi srfi-64))
 
-(test-begin "log/view-tests")
+(test-begin "logs/view-tests")
 
 ;; Test successful view creation with all parameters
 (test-group "make-view success cases"
@@ -105,4 +105,4 @@
     (test-assert "view is created with content" (is-a? view <view>))
     (test-equal "content is preserved" '("uuid-1" "uuid-2" "uuid-3" "uuid-4") (view-content view))))
 
-(test-end "log/view-tests")
+(test-end "logs/view-tests")

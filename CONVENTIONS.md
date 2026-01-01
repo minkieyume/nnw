@@ -9,7 +9,7 @@
 3. Testing
 - Test Location: All unit tests must be placed in the /test directory.
 - Requirement: Ensure new features include corresponding unit tests.
-- Test Name：All unit test's test-begin or test-ends' names must begin with log/ ,
+- Test Name：All unit test's test-begin or test-ends' names must begin with logs/ ,
   test-group test-error and other functions dosen't follow this rule.
 
 4. Reference

@@ -5,8 +5,7 @@
 	    view-id
 	    view-name
 	    view-metadata
-	    view-content
-	    view->string))
+	    view-content))
 
 (define-class <view> ()
   (id #:init-keyword #:id
