@@ -39,12 +39,13 @@
               content)))
 
 ;; Type checking for initialize method
+;; TODO Change when to unless
 (define-method (initialize (view <view>) initargs)
   (let-keywords initargs #f ((name #f)
                              (metadata '())
                              (content '()))
     ;; Validate name
-    (when (not name)
+    (unless name
       (error "view name is required"))
     (when (not (string? name))
       (error "view name must be a string" name))
