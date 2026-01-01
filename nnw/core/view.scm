@@ -1,12 +1,16 @@
 (define-module (nnw core view)
   #:use-module (oop goops)
   #:use-module (uuid generate)
+  #:use-module (ice-9 regex)
+  #:use-module (srfi srfi-1)
   #:export (<view>
 	    view-id
 	    view-name
 	    view-metadata
 	    view-content
-	    view->string))
+	    view->string
+	    valid-content?
+	    uuid-v4-string?))
 
 (define-class <view> ()
   (id #:init-keyword #:id
@@ -20,8 +24,40 @@
 (define-method (view->string (view <view>))
   (view-name view))
 
-;; TODO 为content实现独立的类型检查函数，要求content为一个alist，且content的键必须为符合v4格式的uuid string。
+;; Check if a string is a valid UUID v4 format
+(define (uuid-v4-string? str)
+  (and (string? str)
+       (let ((pattern "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"))
+         (string-match pattern str))))
 
-;; TODO 给initialize方法添加类型检查，并修改与之相关的单元测试，避免其它单元测试报错，同时还要添加针对initialize的类型检查是否生效的单元测试。
-(define-method (initialize (view <view>) . initargs)
+;; Validate that content is an alist with UUID v4 string keys
+(define (valid-content? content)
+  (and (list? content)
+       (every (lambda (item)
+                (and (pair? item)
+                     (uuid-v4-string? (car item))))
+              content)))
+
+;; Type checking for initialize method
+(define-method (initialize (view <view>) initargs)
+  (let-keywords initargs #f ((name #f)
+                             (metadata '())
+                             (content '()))
+    ;; Validate name
+    (when (not name)
+      (error "view name is required"))
+    (when (not (string? name))
+      (error "view name must be a string" name))
+    
+    ;; Validate metadata
+    (when (not (list? metadata))
+      (error "view metadata must be a list" metadata))
+    
+    ;; Validate content
+    (when (not (list? content))
+      (error "view content must be a list" content))
+    (when (and (not (null? content))
+               (not (valid-content? content)))
+      (error "view content must be an alist with UUID v4 string keys" content)))
+  
   (next-method))

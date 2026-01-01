@@ -9,12 +9,16 @@
   (let ((view (make <view>
                 #:name "Test View"
                 #:metadata '(("key1" . "value1") ("key2" . "value2"))
-                #:content '("block1" "block2" "block3"))))
+                #:content '(("550e8400-e29b-41d4-a716-446655440000" . "block1")
+                           ("550e8400-e29b-41d4-a716-446655440001" . "block2")
+                           ("550e8400-e29b-41d4-a716-446655440002" . "block3")))))
     
     (test-assert "view is created" (is-a? view <view>))
     (test-equal "name is set" "Test View" (view-name view))
     (test-equal "metadata is set" '(("key1" . "value1") ("key2" . "value2")) (view-metadata view))
-    (test-equal "content is set" '("block1" "block2" "block3") (view-content view))
+    (test-equal "content is set" '(("550e8400-e29b-41d4-a716-446655440000" . "block1")
+                                   ("550e8400-e29b-41d4-a716-446655440001" . "block2")
+                                   ("550e8400-e29b-41d4-a716-446655440002" . "block3")) (view-content view))
     (test-assert "id is generated" (string? (view-id view)))
     (test-assert "id is non-empty" (> (string-length (view-id view)) 0))))
 
@@ -30,9 +34,9 @@
 
 ;; Test view creation with custom id
 (test-group "make-view with custom id"
-  (let ((custom-id "custom-uuid-12345")
+  (let ((custom-id "550e8400-e29b-41d4-a716-446655440000")
         (view (make <view>
-                #:id "custom-uuid-12345"
+                #:id "550e8400-e29b-41d4-a716-446655440000"
                 #:name "Custom ID View")))
     
     (test-assert "view is created" (is-a? view <view>))
@@ -52,7 +56,7 @@
   (let ((view (make <view>
                 #:name "String Test View"
                 #:metadata '(("author" . "test"))
-                #:content '("block1"))))
+                #:content '(("550e8400-e29b-41d4-a716-446655440000" . "block1")))))
     
     (test-equal "view->string returns view name"
                 "String Test View"
@@ -100,9 +104,63 @@
 (test-group "content with various block references"
   (let ((view (make <view>
                 #:name "Content View"
-                #:content '("uuid-1" "uuid-2" "uuid-3" "uuid-4"))))
+                #:content '(("550e8400-e29b-41d4-a716-446655440000" . "data1")
+                           ("550e8400-e29b-41d4-a716-446655440001" . "data2")
+                           ("550e8400-e29b-41d4-a716-446655440002" . "data3")
+                           ("550e8400-e29b-41d4-a716-446655440003" . "data4")))))
     
     (test-assert "view is created with content" (is-a? view <view>))
-    (test-equal "content is preserved" '("uuid-1" "uuid-2" "uuid-3" "uuid-4") (view-content view))))
+    (test-equal "content is preserved" '(("550e8400-e29b-41d4-a716-446655440000" . "data1")
+                                         ("550e8400-e29b-41d4-a716-446655440001" . "data2")
+                                         ("550e8400-e29b-41d4-a716-446655440002" . "data3")
+                                         ("550e8400-e29b-41d4-a716-446655440003" . "data4")) (view-content view))))
+
+;; Test UUID v4 format validation
+(test-group "logs/uuid-v4-validation"
+  (test-assert "valid UUID v4 string is recognized"
+               (uuid-v4-string? "550e8400-e29b-41d4-a716-446655440000"))
+  (test-assert "invalid UUID format is rejected"
+               (not (uuid-v4-string? "not-a-uuid")))
+  (test-assert "non-string is rejected"
+               (not (uuid-v4-string? 12345)))
+  (test-assert "UUID v1 format is rejected"
+               (not (uuid-v4-string? "550e8400-e29b-11d4-a716-446655440000")))
+  (test-assert "UUID with wrong version is rejected"
+               (not (uuid-v4-string? "550e8400-e29b-21d4-a716-446655440000"))))
+
+;; Test valid-content? function
+(test-group "logs/valid-content-validation"
+  (test-assert "empty content is valid"
+               (valid-content? '()))
+  (test-assert "content with valid UUID v4 keys is valid"
+               (valid-content? '(("550e8400-e29b-41d4-a716-446655440000" . "data1")
+                                ("550e8400-e29b-41d4-a716-446655440001" . "data2"))))
+  (test-assert "content with invalid UUID keys is rejected"
+               (not (valid-content? '(("invalid-uuid" . "data1")))))
+  (test-assert "non-list content is rejected"
+               (not (valid-content? "not-a-list")))
+  (test-assert "content with non-pair items is rejected"
+               (not (valid-content? '("550e8400-e29b-41d4-a716-446655440000")))))
+
+;; Test initialize method type checking
+(test-group "logs/initialize-type-checking"
+  (test-error "missing name raises error"
+              (make <view>))
+  (test-error "non-string name raises error"
+              (make <view> #:name 123))
+  (test-error "non-list metadata raises error"
+              (make <view> #:name "Test" #:metadata "not-a-list"))
+  (test-error "non-list content raises error"
+              (make <view> #:name "Test" #:content "not-a-list"))
+  (test-error "content with invalid UUID keys raises error"
+              (make <view> 
+                #:name "Test"
+                #:content '(("invalid-uuid" . "data"))))
+  (test-assert "valid view creation succeeds"
+               (is-a? (make <view>
+                        #:name "Valid View"
+                        #:metadata '(("key" . "value"))
+                        #:content '(("550e8400-e29b-41d4-a716-446655440000" . "data")))
+                      <view>)))
 
 (test-end "logs/view-tests")
