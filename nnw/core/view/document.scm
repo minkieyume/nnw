@@ -45,7 +45,7 @@
 
 ;; Override view->string to output blocks/views in index order
 (define-method (view->string (doc <document>))
-  (let* ((content (view-content doc))
+  (let* ((content (get-content doc))
          ;; Sort by index value
          (sorted-content (sort content (lambda (a b) (< (cdr a) (cdr b)))))
          ;; Get block/view sources in order
@@ -54,7 +54,7 @@
                           ;; Retrieve block or view by id and get its source/string
                           (cond
                            ((hash-ref *block-storage* id)
-                            => (lambda (block) (block-source block)))
+                            => (lambda (block) (get-source block)))
                            ((hash-ref *view-storage* id)
                             => (lambda (view) (view->string view)))
                            (else
@@ -68,7 +68,7 @@
   (let ((lines (string-split source #\newline)))
     (filter (lambda (s) (not (string=? s ""))) lines)))
 
-(define make-document-blocks sources tags #:optional (index 0)
+(define* (make-document-blocks sources tags #:optional (index 0))
   (cond ((null? sources) '())
 	(else
 	 (let ((timestamp (current-timestamp)))
@@ -80,9 +80,9 @@
 	      #:tags tags
 	      #:created timestamp
 	      #:modified timestamp)
-	    (make-blocks (cdr sources) tags (+ index 1)))))))
+	    (make-document-blocks (cdr sources) tags (+ index 1)))))))
 
-(define (make-document-contents blocks #:optional (index 0))
+(define* (make-document-contents blocks #:optional (index 0))
   (cond ((null? blocks) '())
 	(else
 	 (cons
