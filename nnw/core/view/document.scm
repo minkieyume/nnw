@@ -10,7 +10,10 @@
   #:use-module (srfi srfi-1)
   #:export (<document>
 	    <document-type>
-            valid-document-content?))
+            valid-document-content?
+	    make-document-blocks
+	    make-document-contents
+	    parse-document-source))
 
 (define-class <document-type> (<view-type>))
 
