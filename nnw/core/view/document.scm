@@ -2,6 +2,7 @@
   #:use-module (nnw core view)
   #:use-module (nnw core block)
   #:use-module (nnw core utils)
+  #:use-module (nnw core input)
   #:use-module (oop goops)
   #:use-module (uuid generate)
   #:use-module (ice-9 optargs)
@@ -25,13 +26,15 @@
               content)))
 
 ;; Override initialize to add document-specific content validation
-;; TODO 重构并修复let-keywords的报错
 (define-method (initialize (doc <document>) initargs)
-  (let-keywords initargs #f ((content '()))
-		;; Validate document-specific content format
-		(unless (or (null? content)
-			    (valid-document-content? content))
-		  (error "document content must be an alist with UUID v4 string keys and non-negative integer values" content)))
+  (let-keywords initargs #f ((id #f)
+                             (name #f)
+                             (metadata '())
+                             (content '()))
+    ;; Validate document-specific content format
+    (unless (or (null? content)
+                (valid-document-content? content))
+      (error "document content must be an alist with UUID v4 string keys and non-negative integer values" content)))
   
   (next-method))
 
@@ -44,7 +47,12 @@
          (sources (map (lambda (item)
                         (let ((id (car item)))
                           ;; Retrieve block or view by id and get its source/string
-                          ;; For now, return empty string as placeholder
-                          ""))
+                          (cond
+                           ((hash-ref *block-storage* id)
+                            => (lambda (block) (block-source block)))
+                           ((hash-ref *view-storage* id)
+                            => (lambda (view) (view->string view)))
+                           (else
+                            (error "Block or view not found with id" id)))))
                       sorted-content)))
     (string-join sources "\n")))
