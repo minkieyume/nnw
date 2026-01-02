@@ -1,6 +1,8 @@
 (use-modules (oop goops)
 	     (nnw core view)
 	     (nnw core utils)
+	     (nnw core input)
+	     (nnw core output)
              (srfi srfi-64))
 
 (test-begin "logs/nnwio")

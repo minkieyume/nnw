@@ -16,6 +16,9 @@
 - Documentation Priority: Always prioritize the official Guile Manual (https://www.gnu.org/software/guile/manual/guile.html) as the primary technical reference for syntax and built-in features.
 - Third-party Modules: For any modules or libraries not covered in the official Guile documentation, you are exempt from the "Guile First" rule and should utilize the most relevant external documentation.
 
-5. Other
+5. Error Codes
+- When using `let-keywords`, all possible keyword arguments must be explicitly handled in the binding list, otherwise the code will fail to compile.
+
+6. Other
 - Automatic Imports: When generating code that depends on external modules, always include the necessary use-modules statements or relevant import declarations automatically.
 - API Validation: Verify that the functions, macros, or variables being used are actually exported by and present within the referenced modules to prevent "unbound variable" or "undefined identifier" errors.
