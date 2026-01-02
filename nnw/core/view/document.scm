@@ -9,13 +9,16 @@
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
   #:export (<document>
-            valid-document-content?
-            parse-document-source))
+	    <document-type>
+            valid-document-content?))
+
+(define-class <document-type> (<view-type>))
 
 ;; Document view: content is an alist of (uuid-string . index-number)
 ;; representing the order of blocks/views
 (define-class <document> (<view>)
-  (type #:init-value "document"))
+  (type #:init-value "document")
+  #:metaclass <document-type>)
 
 ;; Validate that content is an alist with UUID v4 string keys and non-negative integer values
 (define (valid-document-content? content)
@@ -65,8 +68,29 @@
   (let ((lines (string-split source #\newline)))
     (filter (lambda (s) (not (string=? s ""))) lines)))
 
+(define make-document-blocks sources tags #:optional (index 0)
+  (cond ((null? sources) '())
+	(else
+	 (let ((timestamp (current-timestamp)))
+	   (cons
+	    (make <block>
+	      #:description (string-append "Block " (number->string (+ index 1)))
+	      #:source (car sources)
+	      #:type "text"
+	      #:tags tags
+	      #:created timestamp
+	      #:modified timestamp)
+	    (make-blocks (cdr sources) tags (+ index 1)))))))
+
+(define (make-document-contents blocks #:optional (index 0))
+  (cond ((null? blocks) '())
+	(else
+	 (cons
+	  (cons (get-id (car blocks)) index)
+	  (make-document-contents (cdr blocks) (+ index 1))))))
+
 ;; Parse source string into a document view and its blocks
-(define-method (parse (source <string>) (view-class <view-type>) (parameters <list>))
+(define-method (parse (source <string>) (view-class <document-type>) (parameters <list>))
   "Parse document source into a document view and its blocks.
    Parameters is a keyword list that may contain:
    - #:tags - list of tag strings
@@ -82,41 +106,17 @@
                                (view-id #f)
                                (view-name "Untitled Document")
                                (view-metadata '()))
-    
-    (unless (list-of-string? tags)
-      (error "tags must be a list of strings" tags))
-    
-    (when view-id
-      (unless (uuid-v4-string? view-id)
-        (error "view-id must be a valid UUID v4 string" view-id)))
-    
-    (let* ((block-sources (parse-document-source source))
-           (timestamp (current-timestamp))
-           (blocks '())
-           (content '()))
-      
-      ;; Create blocks for each source line
-      (let loop ((sources block-sources)
-                 (index 0))
-        (unless (null? sources)
-          (let* ((block-source (car sources))
-                 (block (make <block>
-                          #:description (string-append "Block " (number->string (+ index 1)))
-                          #:source block-source
-                          #:type "text"
-                          #:tags tags
-                          #:created timestamp
-                          #:modified timestamp)))
-            (set! blocks (cons block blocks))
-            (set! content (cons (cons (get-id block) index) content))
-            (loop (cdr sources) (+ index 1)))))
-      
-      ;; Create view instance
-      (let ((view (make view-class
-                    #:id view-id
-                    #:name view-name
-                    #:metadata view-metadata
-                    #:content (reverse content))))
-        
-        ;; Return pair of (view . blocks)
-        (cons view (reverse blocks))))))
+		
+		(let* ((block-sources (parse-document-source source))
+		       (blocks (make-document-blocks block-sources tags))
+		       (content (make-document-contents blocks)))
+		  
+		  ;; Create view instance
+		  (let ((view (make view-class
+				#:id view-id
+				#:name view-name
+				#:metadata view-metadata
+				#:content content)))
+		    
+		    ;; Return pair of (view . blocks)
+		    (cons view blocks)))))
