@@ -1,6 +1,6 @@
 (define-module (nnw core input)
   #:use-module (nnw core block)
-  #:use-module (nnw core view)
+  #:use-module ((nnw core view) #:prefix nnw:)
   #:use-module (nnw core view document)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
@@ -46,7 +46,7 @@
     (unless (uuid-v4-string? view-id)
       (error "view-id must be a valid UUID v4 string" view-id)))
   
-  ;; Parse source into block sources
+  ;; TODO 重构下面代码，将解析相关代码实现到 'parser.scm' 中，实现为 `parse` 方法，并确保通过test/parser.scm的测试。
   (let* ((block-sources (parse-document-source source))
          (timestamp (current-timestamp))
          (blocks '())
@@ -78,7 +78,7 @@
                  #:content (reverse content))))
       
       ;; Store view
-      (hash-set! *view-storage* (view-id doc) doc)
+      (hash-set! *view-storage* (nnw:view-id doc) doc)
       
       ;; Return view id
-      (view-id doc))))
+      (nnw:view-id doc))))
