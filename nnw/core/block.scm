@@ -1,35 +1,31 @@
 (define-module (nnw core block)
+  #:use-module (nnw core generic)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
-  #:use-module (uuid generate)
-  #:use-module (rnrs bytevectors)
+  #:use-module (uuid generate)  
   #:use-module (ice-9 iconv)
   #:use-module (srfi srfi-1)
-  #:use-module (gcrypt hash)
   #:use-module (ice-9 optargs)
-  #:export (<block>
-            block-id
-            block-description
-            block-source
-            block-type
-            block-tags
-            block-hash
-            block-created
-            block-modified
-	    block-metadata))
+  #:export (<block>            
+            get-description
+            get-source            
+            get-tags
+            get-hash
+            get-created
+            get-modified))
 
 (define-class <block> ()
   (id #:init-keyword #:id 
       #:init-thunk generate-string-uuid
-      #:getter block-id)
-  (description #:init-keyword #:description #:getter block-description)
-  (source #:init-keyword #:source #:getter block-source)
-  (type #:init-keyword #:type #:getter block-type)
-  (tags #:init-keyword #:tags #:getter block-tags)
-  (hash #:init-keyword #:hash #:getter block-hash)
-  (metadata #:init-keyword #:metadata #:getter block-metadata)
-  (created #:init-keyword #:created #:getter block-created)
-  (modified #:init-keyword #:modified #:getter block-modified))
+      #:getter get-id)
+  (description #:init-keyword #:description #:getter get-description)
+  (source #:init-keyword #:source #:getter get-source)
+  (type #:init-keyword #:type #:getter get-type)
+  (tags #:init-keyword #:tags #:getter get-tags)
+  (hash #:init-keyword #:hash #:getter get-hash)
+  (metadata #:init-keyword #:metadata #:getter get-metadata)
+  (created #:init-keyword #:created #:getter get-created)
+  (modified #:init-keyword #:modified #:getter get-modified))
 
 ;; Type checking and initialization for block
 (define-method (initialize (block <block>) initargs)
@@ -40,8 +36,7 @@
                              (tags #f)
                              (created #f)
                              (modified #f)
-                             (metadata '()))
-    
+                             (metadata '()))    
     ;; Validate id
     (when id
       (unless (uuid-v4-string? id)
@@ -93,17 +88,6 @@
       (error "block metadata must be an alist with string keys" metadata))
     
     ;; Generate hash from source and tags
-    (let* ((tags-str (string-join tags ","))
-           (combined-str (string-append source tags-str))
-           (hash-bytes (sha256 (string->utf8 combined-str)))
-           ;; Convert bytevector to hexadecimal string representation
-           (hash-hex (string-join
-                      (map (lambda (byte)
-                             (format #f "~2,'0x" byte))
-                           (bytevector->u8-list hash-bytes))
-                      "")))
-      
-      ;; Set the hash slot before calling next-method
-      (slot-set! block 'hash hash-hex)))
+    (slot-set! block 'hash (apply generate-hash `("," ,source ,@tags))))
   
   (next-method))

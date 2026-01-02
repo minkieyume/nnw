@@ -1,6 +1,8 @@
 (use-modules (oop goops)
+	     (nnw core generic)
+	     (nnw core view)
 	     (nnw core view document)
-	     (nnw core block)
+	     (nnw core block)	     
 	     (srfi srfi-1)
              (srfi srfi-64))
 

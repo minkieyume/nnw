@@ -1,6 +1,7 @@
 (use-modules (oop goops)
+	     (nnw core generic)
 	     (nnw core view)
-	     (nnw core utils)
+	     (nnw core utils)	     
              (srfi srfi-64))
 
 (test-begin "logs/view-tests")
@@ -15,23 +16,23 @@
                            ("550e8400-e29b-41d4-a716-446655440002" . "block3")))))
     
     (test-assert "view is created" (is-a? view <view>))
-    (test-equal "name is set" "Test View" (view-name view))
-    (test-equal "metadata is set" '(("key1" . "value1") ("key2" . "value2")) (view-metadata view))
+    (test-equal "name is set" "Test View" (get-name view))
+    (test-equal "metadata is set" '(("key1" . "value1") ("key2" . "value2")) (get-metadata view))
     (test-equal "content is set" '(("550e8400-e29b-41d4-a716-446655440000" . "block1")
                                    ("550e8400-e29b-41d4-a716-446655440001" . "block2")
-                                   ("550e8400-e29b-41d4-a716-446655440002" . "block3")) (view-content view))
-    (test-assert "id is generated" (string? (view-id view)))
-    (test-assert "id is non-empty" (> (string-length (view-id view)) 0))))
+                                   ("550e8400-e29b-41d4-a716-446655440002" . "block3")) (get-content view))
+    (test-assert "id is generated" (string? (get-id view)))
+    (test-assert "id is non-empty" (> (string-length (get-id view)) 0))))
 
 ;; Test view creation with minimal parameters
 (test-group "make-view with minimal parameters"
   (let ((view (make <view> #:name "Minimal View")))
     
     (test-assert "view is created" (is-a? view <view>))
-    (test-equal "name is set" "Minimal View" (view-name view))
-    (test-equal "metadata defaults to empty list" '() (view-metadata view))
-    (test-equal "content defaults to empty list" '() (view-content view))
-    (test-assert "id is auto-generated" (string? (view-id view)))))
+    (test-equal "name is set" "Minimal View" (get-name view))
+    (test-equal "metadata defaults to empty list" '() (get-metadata view))
+    (test-equal "content defaults to empty list" '() (get-content view))
+    (test-assert "id is auto-generated" (string? (get-id view)))))
 
 ;; Test view creation with custom id
 (test-group "make-view with custom id"
@@ -41,8 +42,8 @@
                 #:name "Custom ID View")))
     
     (test-assert "view is created" (is-a? view <view>))
-    (test-equal "custom id is set" custom-id (view-id view))
-    (test-equal "name is set" "Custom ID View" (view-name view))))
+    (test-equal "custom id is set" custom-id (get-id view))
+    (test-equal "name is set" "Custom ID View" (get-name view))))
 
 ;; Test ID generation uniqueness
 (test-group "ID generation uniqueness"
@@ -50,7 +51,7 @@
          (view2 (make <view> #:name "View 2")))
     
     (test-assert "different views produce different IDs"
-                 (not (string=? (view-id view1) (view-id view2))))))
+                 (not (string=? (get-id view1) (get-id view2))))))
 
 ;; Test view->string method
 (test-group "view->string method"
@@ -81,8 +82,8 @@
                 #:content '())))
     
     (test-assert "view is created with empty metadata and content" (is-a? view <view>))
-    (test-equal "metadata is empty" '() (view-metadata view))
-    (test-equal "content is empty" '() (view-content view))))
+    (test-equal "metadata is empty" '() (get-metadata view))
+    (test-equal "content is empty" '() (get-content view))))
 
 ;; Test metadata with various structures
 (test-group "metadata with various structures"
@@ -99,7 +100,7 @@
                   ("number" . 42)
                   ("list" . (1 2 3))
                   ("nested" . (("inner" . "data"))))
-                (view-metadata view))))
+                (get-metadata view))))
 
 ;; Test content with various block references
 (test-group "content with various block references"
@@ -114,7 +115,7 @@
     (test-equal "content is preserved" '(("550e8400-e29b-41d4-a716-446655440000" . "data1")
                                          ("550e8400-e29b-41d4-a716-446655440001" . "data2")
                                          ("550e8400-e29b-41d4-a716-446655440002" . "data3")
-                                         ("550e8400-e29b-41d4-a716-446655440003" . "data4")) (view-content view))))
+                                         ("550e8400-e29b-41d4-a716-446655440003" . "data4")) (get-content view))))
 
 ;; Test UUID v4 format validation
 (test-group "uuid-v4-validation"

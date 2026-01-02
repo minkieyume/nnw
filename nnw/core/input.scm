@@ -1,8 +1,8 @@
 (define-module (nnw core input)
+  #:use-module (nnw core generic)
   #:use-module (nnw core block)
-  #:use-module ((nnw core view) #:prefix nnw:)
+  #:use-module (nnw core view)
   #:use-module (nnw core view document)
-  #:use-module (nnw core parser)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
   #:use-module (ice-9 optargs)
@@ -27,16 +27,6 @@
                     (view-metadata '()))
   "Parse and store a document view with its blocks"
   
-  (unless (string? source)
-    (error "source must be a string" source))
-  
-  (unless (list-of-string? tags)
-    (error "tags must be a list of strings" tags))
-  
-  (when view-id
-    (unless (uuid-v4-string? view-id)
-      (error "view-id must be a valid UUID v4 string" view-id)))
-  
   ;; Parse document source using parser module
   (let* ((parse-result (parse source <document>
                               #:tags tags
@@ -52,7 +42,7 @@
               blocks)
     
     ;; Store view
-    (hash-set! *view-storage* (nnw:view-id doc) doc)
+    (hash-set! *view-storage* (get-id doc) doc)
     
     ;; Return view id
-    (nnw:view-id doc)))
+    (get-id doc)))

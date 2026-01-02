@@ -1,4 +1,5 @@
 (define-module (nnw core view document)
+  #:use-module (nnw core generic)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
   #:use-module (nnw core utils)
@@ -7,7 +8,6 @@
   #:use-module (uuid generate)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-19)
   #:export (<document>
             valid-document-content?
             parse-document-source))
@@ -108,7 +108,7 @@
                           #:created timestamp
                           #:modified timestamp)))
             (set! blocks (cons block blocks))
-            (set! content (cons (cons (block-id block) index) content))
+            (set! content (cons (cons (get-id block) index) content))
             (loop (cdr sources) (+ index 1)))))
       
       ;; Create view instance

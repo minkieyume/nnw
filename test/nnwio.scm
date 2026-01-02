@@ -1,4 +1,5 @@
 (use-modules (oop goops)
+	     (nnw core generic)
 	     (nnw core view)
 	     (nnw core utils)
 	     (nnw core input)

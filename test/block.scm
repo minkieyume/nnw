@@ -1,4 +1,5 @@
 (use-modules (oop goops)
+	     (nnw core generic)
 	     (nnw core block)
              (srfi srfi-64)
              (ice-9 regex))
@@ -16,14 +17,14 @@
                 #:modified "2024-01-02")))
     
     (test-assert "block is created" (is-a? block <block>))
-    (test-equal "description is set" "Test block" (block-description block))
-    (test-equal "source is set" "test-source.txt" (block-source block))
-    (test-equal "type is set" "text" (block-type block))
-    (test-equal "tags are set" '("tag1" "tag2") (block-tags block))
-    (test-equal "created is set" "2024-01-01" (block-created block))
-    (test-equal "modified is set" "2024-01-02" (block-modified block))
-    (test-assert "id is generated" (string? (block-id block)))
-    (test-assert "id is non-empty" (> (string-length (block-id block)) 0))))
+    (test-equal "description is set" "Test block" (get-description block))
+    (test-equal "source is set" "test-source.txt" (get-source block))
+    (test-equal "type is set" "text" (get-type block))
+    (test-equal "tags are set" '("tag1" "tag2") (get-tags block))
+    (test-equal "created is set" "2024-01-01" (get-created block))
+    (test-equal "modified is set" "2024-01-02" (get-modified block))
+    (test-assert "id is generated" (string? (get-id block)))
+    (test-assert "id is non-empty" (> (string-length (get-id block)) 0))))
 
 ;; Test same sources produce different IDs
 (test-group "ID generation uniqueness"
@@ -43,7 +44,7 @@
                   #:modified "2024-01-01")))
     
     (test-assert "different sources produce different IDs"
-                 (not (string=? (block-id block1) (block-id block2))))))
+                 (not (string=? (get-id block1) (get-id block2))))))
 
 ;; Test empty tags list
 (test-group "empty tags list"
@@ -56,8 +57,8 @@
                 #:modified "2024-01-01")))
     
     (test-assert "block is created with empty tags" (is-a? block <block>))
-    (test-equal "tags are empty" '() (block-tags block))
-    (test-assert "id is still generated" (string? (block-id block)))))
+    (test-equal "tags are empty" '() (get-tags block))
+    (test-assert "id is still generated" (string? (get-id block)))))
 
 ;; Test type validation: description must be a string
 (test-group "type validation - description"
@@ -144,10 +145,10 @@
                 #:created "2024-01-01"
                 #:modified "2024-01-01")))
     
-    (test-assert "hash is generated" (string? (block-hash block)))
-    (test-assert "hash is non-empty" (> (string-length (block-hash block)) 0))
+    (test-assert "hash is generated" (string? (get-hash block)))
+    (test-assert "hash is non-empty" (> (string-length (get-hash block)) 0))
     (test-assert "hash is hexadecimal" 
-                 (string-match "^[0-9a-f]+$" (block-hash block)))))
+                 (string-match "^[0-9a-f]+$" (get-hash block)))))
 
 ;; Test hash consistency
 (test-group "hash consistency"
@@ -167,8 +168,8 @@
                   #:modified "2024-01-01")))
     
     (test-equal "same source and tags produce same hash"
-                (block-hash block1)
-                (block-hash block2))))
+                (get-hash block1)
+                (get-hash block2))))
 
 ;; Test hash changes with different inputs
 (test-group "hash changes with different inputs"
@@ -195,9 +196,9 @@
                   #:modified "2024-01-01")))
     
     (test-assert "different sources produce different hashes"
-                 (not (string=? (block-hash block1) (block-hash block2))))
+                 (not (string=? (get-hash block1) (get-hash block2))))
     (test-assert "different tags produce different hashes"
-                 (not (string=? (block-hash block1) (block-hash block3))))))
+                 (not (string=? (get-hash block1) (get-hash block3))))))
 
 ;; Test metadata handling
 (test-group "metadata handling"
@@ -213,7 +214,7 @@
     (test-assert "block with metadata is created" (is-a? block <block>))
     (test-equal "metadata is set correctly"
                 '(("key1" . "value1") ("key2" . "value2"))
-                (block-metadata block))))
+                (get-metadata block))))
 
 ;; Test metadata validation
 (test-group "metadata validation"

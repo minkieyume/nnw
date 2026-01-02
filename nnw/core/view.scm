@@ -1,4 +1,5 @@
 (define-module (nnw core view)
+  #:use-module (nnw core generic)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
   #:use-module (uuid generate)
@@ -7,33 +8,38 @@
   #:use-module (ice-9 optargs)
   #:export (<view>
 	    <view-type>
-	    view-id
-	    view-name
-	    view-type
-	    view-metadata
-	    view-content
+	    get-name
+	    get-content
 	    view->string
-	    valid-content?))
+	    valid-content?
+	    parse))
 
 (define-class <view-type> (<class>))
 
 (define-class <view> ()
   (id #:init-keyword #:id
       #:init-thunk generate-string-uuid
-      #:getter view-id)
-  (name #:init-keyword #:name #:getter view-name)
-  (type #:init-value "view" #:getter view-type)
-  (metadata #:init-keyword #:metadata #:init-value '() #:getter view-metadata)
-  (content #:init-keyword #:content #:init-value '() #:getter view-content)
+      #:getter get-id)
+  (name #:init-keyword #:name #:getter get-name)
+  (type #:init-value "view" #:getter get-type)
+  (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
+  (content #:init-keyword #:content #:init-value '() #:getter get-content)
   #:metaclass <view-type>)
+
+(define-generic view->string)
 
 ;; Format a view to a string
 (define-method (view->string (view <view>))
-  (view-name view))
+  (get-name view))
+
+(define-generic parse)
 
 ;; Parse a source string to a view
+(define-method (parse (source <string>) (view-type <view-type>) (parameter <list>))
+  (cons (make view-type #:name "View") '()))
+
 (define-method (parse (source <string>) (view-type <view-type>))
-  (make view-type #:name "View"))
+  (parse source view-type '()))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)
