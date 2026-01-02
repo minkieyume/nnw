@@ -5,7 +5,6 @@
   #:use-module (nnw core utils)
   #:use-module (nnw core input)
   #:use-module (oop goops)
-  #:use-module (uuid generate)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
   #:export (<document>
