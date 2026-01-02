@@ -102,9 +102,6 @@
    - #:view-metadata - metadata alist for the view
    Returns a pair (view . blocks)."
   
-  (unless (string? source)
-    (error "source must be a string" source))
-  
   (let-keywords parameters #f ((tags '())
                                (view-id #f)
                                (view-name "Untitled Document")
