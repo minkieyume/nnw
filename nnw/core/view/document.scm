@@ -7,8 +7,10 @@
   #:use-module (uuid generate)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-19)
   #:export (<document>
-            valid-document-content?))
+            valid-document-content?
+            parse-document-source))
 
 ;; Document view: content is an alist of (uuid-string . index-number)
 ;; representing the order of blocks/views
@@ -56,3 +58,65 @@
                             (error "Block or view not found with id" id)))))
                       sorted-content)))
     (string-join sources "\n")))
+
+;; Parse document source into lines (helper function)
+(define (parse-document-source source)
+  "Split source by newline and filter empty lines."
+  (let ((lines (string-split source #\newline)))
+    (filter (lambda (s) (not (string=? s ""))) lines)))
+
+;; Parse source string into a document view and its blocks
+(define-method (parse (source <string>) (view-class <view-type>) (parameters <list>))
+  "Parse document source into a document view and its blocks.
+   Parameters is a keyword list that may contain:
+   - #:tags - list of tag strings
+   - #:view-id - UUID v4 string for the view
+   - #:view-name - name string for the view
+   - #:view-metadata - metadata alist for the view
+   Returns a pair (view . blocks)."
+  
+  (unless (string? source)
+    (error "source must be a string" source))
+  
+  (let-keywords parameters #f ((tags '())
+                               (view-id #f)
+                               (view-name "Untitled Document")
+                               (view-metadata '()))
+    
+    (unless (list-of-string? tags)
+      (error "tags must be a list of strings" tags))
+    
+    (when view-id
+      (unless (uuid-v4-string? view-id)
+        (error "view-id must be a valid UUID v4 string" view-id)))
+    
+    (let* ((block-sources (parse-document-source source))
+           (timestamp (current-timestamp))
+           (blocks '())
+           (content '()))
+      
+      ;; Create blocks for each source line
+      (let loop ((sources block-sources)
+                 (index 0))
+        (unless (null? sources)
+          (let* ((block-source (car sources))
+                 (block (make <block>
+                          #:description (string-append "Block " (number->string (+ index 1)))
+                          #:source block-source
+                          #:type "text"
+                          #:tags tags
+                          #:created timestamp
+                          #:modified timestamp)))
+            (set! blocks (cons block blocks))
+            (set! content (cons (cons (block-id block) index) content))
+            (loop (cdr sources) (+ index 1)))))
+      
+      ;; Create view instance
+      (let ((view (make view-class
+                    #:id view-id
+                    #:name view-name
+                    #:metadata view-metadata
+                    #:content (reverse content))))
+        
+        ;; Return pair of (view . blocks)
+        (cons view (reverse blocks))))))
