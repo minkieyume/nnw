@@ -2,7 +2,6 @@
 	     (nnw core view)
 	     (nnw core view document)
 	     (nnw core block)
-	     (nnw core parser)
 	     (srfi srfi-1)
              (srfi srfi-64))
 
