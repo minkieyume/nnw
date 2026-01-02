@@ -8,10 +8,6 @@
   #:use-module (srfi srfi-19)
   #:export (parse))
 
-;; Get current timestamp in ISO 8601 format
-(define (current-timestamp)
-  (date->string (current-date) "~Y-~m-~dT~H:~M:~S"))
-
 ;; Parse document source into blocks
 ;; Simple parser: split by newline
 (define (parse-document-source source)
@@ -50,7 +46,7 @@
                (index 0))
       (unless (null? sources)
         (let* ((block-source (car sources))
-               (block (make view-class
+               (block (make <block>
                         #:description (string-append "Block " (number->string (+ index 1)))
                         #:source block-source
                         #:type "text"

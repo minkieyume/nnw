@@ -6,6 +6,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 optargs)
   #:export (<view>
+	    <view-type>
 	    view-id
 	    view-name
 	    view-type
@@ -14,6 +15,8 @@
 	    view->string
 	    valid-content?))
 
+(define-class <view-type> (<class>))
+
 (define-class <view> ()
   (id #:init-keyword #:id
       #:init-thunk generate-string-uuid
@@ -21,11 +24,16 @@
   (name #:init-keyword #:name #:getter view-name)
   (type #:init-value "view" #:getter view-type)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter view-metadata)
-  (content #:init-keyword #:content #:init-value '() #:getter view-content))
+  (content #:init-keyword #:content #:init-value '() #:getter view-content)
+  #:metaclass <view-type>)
 
 ;; Format a view to a string
 (define-method (view->string (view <view>))
   (view-name view))
+
+;; Parse a source string to a view
+(define-method (parse (source <string>) (view-type <view-type>))
+  (make view-type #:name "View"))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)

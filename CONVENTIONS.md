@@ -1,6 +1,8 @@
 1. Coding Style
 - Minimalism First: Write simple, clean, and idiomatic code. Avoid over-engineering.
 - Clarity: Prioritize readability over cleverness.
+- Human First: Code should be self-documenting. Use descriptive names, clear structure, 
+  and comments only when logic is non-obvious. Optimize for maintainability, not brevity.
 
 2. Language & Documentation
 - Reply in Chinese: All responses regarding architecture and code enhancements must be in Chinese.
