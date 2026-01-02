@@ -8,6 +8,7 @@
   #:export (<view>
 	    view-id
 	    view-name
+	    view-type
 	    view-metadata
 	    view-content
 	    view->string
@@ -18,6 +19,7 @@
       #:init-thunk generate-string-uuid
       #:getter view-id)
   (name #:init-keyword #:name #:getter view-name)
+  (type #:init-value "view" #:getter view-type)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter view-metadata)
   (content #:init-keyword #:content #:init-value '() #:getter view-content))
 
