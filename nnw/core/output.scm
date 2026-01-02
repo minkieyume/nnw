@@ -35,7 +35,8 @@
   (let ((view (hash-ref *view-storage* view-id)))
     (unless view
       (error "View not found with id" view-id))
-    
+
+    ;; TODO 将获取view内容的逻辑重构到 view->string 中。
     ;; For document view, output blocks in order
     (if (is-a? view <document>)
         (let* ((content (view-content view))
@@ -43,8 +44,8 @@
                (sorted-content (sort content (lambda (a b) (< (cdr a) (cdr b)))))
                ;; Get sources
                (sources (map (lambda (item)
-                              (get-source-by-id (car item)))
-                            sorted-content)))
+                               (get-source-by-id (car item)))
+                             sorted-content)))
           (string-join sources "\n"))
         ;; For other view types, use view->string
         (view->string view))))

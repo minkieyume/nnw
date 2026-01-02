@@ -25,12 +25,13 @@
               content)))
 
 ;; Override initialize to add document-specific content validation
+;; TODO 重构并修复let-keywords的报错
 (define-method (initialize (doc <document>) initargs)
   (let-keywords initargs #f ((content '()))
-    ;; Validate document-specific content format
-    (unless (or (null? content)
-                (valid-document-content? content))
-      (error "document content must be an alist with UUID v4 string keys and non-negative integer values" content)))
+		;; Validate document-specific content format
+		(unless (or (null? content)
+			    (valid-document-content? content))
+		  (error "document content must be an alist with UUID v4 string keys and non-negative integer values" content)))
   
   (next-method))
 
