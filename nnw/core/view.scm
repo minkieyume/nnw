@@ -78,3 +78,24 @@
       (error "view content must be an alist with UUID v4 string keys" content)))
   
   (next-method))
+
+;; Serialize a view to S-expression format
+(define-method (serilize (view <view>))
+  (list (string->symbol (get-type view))
+        (list 'id (get-id view))
+        (list 'name (get-name view))
+        (list 'type (get-type view))
+        (list 'metadata (get-metadata view))
+        (list 'content (get-content view))))
+
+;; Deserialize a view from S-expression format
+(define-method (unserilize (data <list>))
+  (let* ((fields (cdr data))
+         (get-field (lambda (name)
+                      (let ((pair (assoc name fields)))
+                        (if pair (cadr pair) #f)))))
+    (make <view>
+      #:id (get-field 'id)
+      #:name (get-field 'name)
+      #:metadata (get-field 'metadata)
+      #:content (get-field 'content))))

@@ -98,4 +98,36 @@
 		(slot-set! block 'hash (apply generate-hash `("," ,source ,@tags))))
   (next-method))
 
-(define-method (serilize (block <block>)))
+;; Serialize a block to S-expression format
+(define-method (serilize (block <block>))
+  (list 'block
+        (list 'id (get-id block))
+        (list 'description (get-description block))
+        (list 'source "")
+        (list 'type (get-type block))
+        (list 'tags (get-tags block))
+        (list 'hash (get-hash block))
+        (list 'metadata (get-metadata block))
+        (list 'created (get-created block))
+        (list 'modified (get-modified block))))
+
+;; Deserialize a block from S-expression format
+(define-method (unserilize (data <list>))
+  (let* ((fields (cdr data))
+         (get-field (lambda (name)
+                      (let ((pair (assoc name fields)))
+                        (if pair (cadr pair) #f))))
+         (block-id (get-field 'id))
+         (block-type (get-field 'type))
+         (block-class (cond
+                       ((string=? block-type "text") <text>)
+                       ((string=? block-type "block") <block>)
+                       (else <block>))))
+    (make block-class
+      #:id block-id
+      #:description (get-field 'description)
+      #:source "source"
+      #:tags (get-field 'tags)
+      #:created (get-field 'created)
+      #:modified (get-field 'modified)
+      #:metadata (get-field 'metadata))))
