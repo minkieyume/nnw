@@ -17,6 +17,15 @@
         #:init-value "target/storage"
         #:getter get-path))
 
+(define-method (save (storable <storable>) (storage <filest>))
+  (let* ((base-path (get-path storage))
+         (dir (string-append base-path
+			     (cond ((is-a? storable <view>) "/view")
+				   ((is-a? storable <block>) "/block"))))
+	 (file-name (string-append (get-id storable) ".scm")))
+    ;; Serialize and write to file
+    (save-to-dir dir file-name (serilize storable))))
+
 ;; Save view to file storage
 (define-method (save (view <view>) (storage <filest>))
   (let* ((base-path (get-path storage))

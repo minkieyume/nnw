@@ -4,7 +4,15 @@
   #:use-module (nnw core view)
   #:use-module (nnw core view document)
   #:use-module (nnw core view document org)
-  #:use-module (oop goops))
+  #:use-module (oop goops)
+  #:export (serilize
+	    unserilize))
+
+(define-generic serilize)
+
+(define-generic unserilize)
+
+(define-method (serilize (storable <storable>)))
 
 (define (get-field name fields)
   (let ((pair (assoc name fields)))

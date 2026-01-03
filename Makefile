@@ -1,4 +1,4 @@
-TARGET_DIR = target
-
 test-%:
 	guile test/$*.scm
+clean:
+	rm -fr target/*

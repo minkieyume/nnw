@@ -3,10 +3,9 @@
   #:export (get-id
 	    get-metadata
 	    get-type
-	    serilize
-	    unserilize
 	    save
-	    read-from))
+	    read-from
+	    <storable>))
 
 (define-generic get-id)
 
@@ -14,12 +13,9 @@
 
 (define-generic get-type)
 
-(define-generic serilize)
-
-(define-generic unserilize)
-
 (define-generic save)
 
 (define-generic read-from)
 
-(define-generic string->class)
+(define-class <storable> ()
+  (id #:getter get-id))

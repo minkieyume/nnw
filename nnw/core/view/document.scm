@@ -1,6 +1,5 @@
 (define-module (nnw core view document)
   #:use-module (nnw core generic)
-  #:use-module (nnw core storage)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
   #:use-module (nnw core utils)
@@ -46,22 +45,9 @@
   (next-method))
 
 ;; Override view->string to output blocks/views in index order
-(define-method (view->string (doc <document>))
-  (let* ((content (get-content doc))
-         ;; Sort by index value
-         (sorted-content (sort content (lambda (a b) (< (cdr a) (cdr b)))))
-         ;; Get block/view sources in order
-         (sources (map (lambda (item)
-                         (let* ((id (car item))
-				(content (read-from id (make <filest>))))
-                           ;; Retrieve block or view by id and get its source/string
-                           (cond
-                            ((is-a? content <block>) (get-source content))
-			    ((is-a? content <view>) (view->string content))
-                            (else
-                             (error "Block or view not found with id" id)))))
-                       sorted-content)))
-    (string-join sources "\n")))
+(define-method (view->output (doc <document>))
+  (map car (sort (get-content doc)
+		 (lambda (a b) (< (cdr a) (cdr b))))))
 
 ;; Parse document source into lines (helper function)
 (define (parse-document-source source)

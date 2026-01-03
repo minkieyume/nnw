@@ -10,10 +10,9 @@
 	    <view-type>
 	    get-name
 	    get-content
-	    view->string
+	    view->output
 	    valid-content?
-	    parse
-	    unserilize/view))
+	    parse))
 
 (define-class <view-type> (<class>))
 
@@ -27,10 +26,10 @@
   (content #:init-keyword #:content #:init-value '() #:getter get-content)
   #:metaclass <view-type>)
 
-(define-generic view->string)
+(define-generic view->output)
 
 ;; Format a view to a string
-(define-method (view->string (view <view>))
+(define-method (view->output (view <view>))
   (get-name view))
 
 (define-generic parse)
