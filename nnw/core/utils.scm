@@ -4,13 +4,15 @@
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 format)
+  #:use-module (ice-9 textual-ports)
   #:use-module (srfi srfi-19)
   #:use-module (gcrypt hash)
   #:use-module (rnrs bytevectors)
   #:export (list-of-string?
 	    uuid-v4-string?
 	    current-timestamp
-	    generate-hash))
+	    generate-hash
+	    save-to-dir))
 
 (define (list-of-string? lst)
   (and (list? lst)
@@ -36,3 +38,12 @@
             (format #f "~2,'0x" byte))
           (bytevector->u8-list hash-bytes))
      "")))
+
+(define (save-to-dir dir name context)
+  ;; Create directory if it doesn't exist
+  (system* "mkdir" "-p" dir)
+  
+  (call-with-output-file (string-append dir "/" name)
+    (lambda (port)
+      (write context port)
+      (newline port))))

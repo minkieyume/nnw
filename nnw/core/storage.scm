@@ -1,5 +1,6 @@
 (define-module (nnw core storage)
   #:use-module (nnw core generic)
+  #:use-module (nnw core utils)
   #:use-module (nnw core serilize)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
@@ -7,8 +8,7 @@
   #:use-module (ice-9 textual-ports)
   #:export (<storage>
 	    <filest>
-	    get-path
-	    read-from))
+	    get-path))
 
 (define-class <storage> ())
 
@@ -21,27 +21,29 @@
 (define-method (save (view <view>) (storage <filest>))
   (let* ((base-path (get-path storage))
          (view-dir (string-append base-path "/view"))
-         (file-path (string-append view-dir "/" (get-id view) ".scm")))
-    ;; Create directory if it doesn't exist
-    (system* "mkdir" "-p" view-dir)
+         (file-name (string-append (get-id view) ".scm")))    
     ;; Serialize and write to file
-    (call-with-output-file file-path
-      (lambda (port)
-        (write (serilize view) port)
-        (newline port)))))
+    (save-to-dir view-dir file-name (serilize view))))
 
 ;; Save block to file storage
 (define-method (save (block <block>) (storage <filest>))
   (let* ((base-path (get-path storage))
          (block-dir (string-append base-path "/block"))
-         (file-path (string-append block-dir "/" (get-id block) ".scm")))
-    ;; Create directory if it doesn't exist
-    (system* "mkdir" "-p" block-dir)
+	 (file-name (string-append (get-id block) ".scm")))
     ;; Serialize and write to file
-    (call-with-output-file file-path
-      (lambda (port)
-        (write (serilize block) port)
-        (newline port)))))
+    (save-to-dir block-dir file-name (serilize block))))
+
+(define-method (read-from-view-path view-path)
+  (call-with-input-file view-path
+    (lambda (port)
+      (let ((data (read port)))
+        (unserilize data)))))
+
+(define-method (read-from-block-path block-path)
+  (call-with-input-file block-path
+    (lambda (port)
+      (let ((data (read port)))
+        (unserilize data)))))
 
 ;; Read and deserialize object from file storage by ID
 (define-method (read-from (id <string>) (storage <filest>))
@@ -51,15 +53,9 @@
     (cond
      ;; Try to read from view directory first
      ((file-exists? view-path)
-      (call-with-input-file view-path
-        (lambda (port)
-          (let ((data (read port)))
-            (unserilize data)))))
+      (read-from-view-path view-path))
      ;; Then try block directory
      ((file-exists? block-path)
-      (call-with-input-file block-path
-        (lambda (port)
-          (let ((data (read port)))
-            (unserilize data)))))
+      (read-from-block-path block-path))
      ;; If neither exists, return #f
      (else #f))))
