@@ -26,14 +26,8 @@
     ;; Serialize and write to file
     (save-to-dir dir file-name (serilize storable))))
 
-(define-method (read-from-view-path view-path)
-  (call-with-input-file view-path
-    (lambda (port)
-      (let ((data (read port)))
-        (unserilize data)))))
-
-(define-method (read-from-block-path block-path)
-  (call-with-input-file block-path
+(define-method (read-from-path path)
+  (call-with-input-file path
     (lambda (port)
       (let ((data (read port)))
         (unserilize data)))))
@@ -46,9 +40,9 @@
     (cond
      ;; Try to read from view directory first
      ((file-exists? view-path)
-      (read-from-view-path view-path))
+      (read-from-path view-path))
      ;; Then try block directory
      ((file-exists? block-path)
-      (read-from-block-path block-path))
+      (read-from-path block-path))
      ;; If neither exists, return #f
      (else #f))))
