@@ -1,5 +1,7 @@
 (define-module (nnw core storage)
   #:use-module (nnw core generic)
+  #:use-module (nnw core view)
+  #:use-module (nnw core block)
   #:use-module (oop goops)
   #:use-module (ice-9 textual-ports)
   #:export (<storage>
@@ -43,3 +45,5 @@
       (lambda (port)
         (write (serilize block) port)
         (newline port)))))
+
+;; TODO 为'storage.scm' 实现 'read' 方法，并
