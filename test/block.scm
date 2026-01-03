@@ -55,7 +55,7 @@
 		#:created 20240101
 		#:modified "2024-01-01")))
 
-;; TODO 在该项添加一条简单的小测试，验证同文本哈希是否相同。
+;; Test hash generation and consistency
 (test-group "hash-generate"
   (test-assert "hash is generated"
     (string?
@@ -64,7 +64,21 @@
 		 #:source "test-source"
 		 #:tags '("tag1")
 		 #:created "2024-01-01"
-		 #:modified "2024-01-01")))))
+		 #:modified "2024-01-01"))))
+  
+  (test-equal "same text generates same hash"
+    (get-hash (make <block>
+		#:description "Hash test"
+		#:source "test-source"
+		#:tags '("tag1")
+		#:created "2024-01-01"
+		#:modified "2024-01-01"))
+    (get-hash (make <block>
+		#:description "Hash test"
+		#:source "test-source"
+		#:tags '("tag1")
+		#:created "2024-01-01"
+		#:modified "2024-01-01"))))
 
 ;; Test serilize/unserilize
 (test-group "serilize/unserilize"
