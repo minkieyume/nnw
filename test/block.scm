@@ -1,6 +1,7 @@
 (use-modules (oop goops)
 	     (nnw core generic)
 	     (nnw core serilize)
+	     (nnw core utils)
 	     (nnw core block)
              (srfi srfi-64)
              (ice-9 regex))
@@ -44,7 +45,26 @@
                #:source "source"
                #:tags '()
                #:created 20240101
-               #:modified "2024-01-01")))
+               #:modified "2024-01-01"))
+  (test-error "id must be uuid-v4-string"
+              (make <block>
+		#:id "tst-id"
+		#:description "desc"
+		#:source "source"
+		#:tags '()
+		#:created 20240101
+		#:modified "2024-01-01")))
+
+;; TODO 在该项添加一条简单的小测试，验证同文本哈希是否相同。
+(test-group "hash-generate"
+  (test-assert "hash is generated"
+    (string?
+     (get-hash (make <block>
+		 #:description "Hash test"
+		 #:source "test-source"
+		 #:tags '("tag1")
+		 #:created "2024-01-01"
+		 #:modified "2024-01-01")))))
 
 ;; Test serilize/unserilize
 (test-group "serilize/unserilize"
@@ -87,13 +107,6 @@
        #:source "source"
        #:tags '("tag1")
        #:created "2024-01-01"
-       #:modified "2024-01-01")))
-  
-  (test-assert "hash is generated" (string? (get-hash (make <block>
-                                                        #:description "Hash test"
-                                                        #:source "test-source"
-                                                        #:tags '("tag1")
-                                                        #:created "2024-01-01"
-                                                        #:modified "2024-01-01")))))
+       #:modified "2024-01-01"))))
 
 (test-end "logs/block-tests")
