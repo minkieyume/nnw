@@ -97,3 +97,5 @@
 		;; Generate hash from source and tags
 		(slot-set! block 'hash (apply generate-hash `("," ,source ,@tags))))
   (next-method))
+
+(define-method (serilize (block <block>)))
