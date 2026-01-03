@@ -42,5 +42,5 @@
         (write (serilize block) port)
         (newline port)))))
 
-;; Read view from file storage
+;; TODO 更新read-from代码，确保其能正确通过搜索view和block的路径，实现反序列化并返回值。如果找不到对应id的文件返回#f。
 (define-method (read-from (id <string>) (storage <filest>)))
