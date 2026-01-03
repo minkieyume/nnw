@@ -16,7 +16,7 @@
 
 (define-class <view-type> (<class>))
 
-(define-class <view> ()
+(define-class <view> (<storable>)
   (id #:init-keyword #:id
       #:init-thunk generate-string-uuid
       #:getter get-id)

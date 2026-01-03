@@ -26,22 +26,6 @@
     ;; Serialize and write to file
     (save-to-dir dir file-name (serilize storable))))
 
-;; Save view to file storage
-(define-method (save (view <view>) (storage <filest>))
-  (let* ((base-path (get-path storage))
-         (view-dir (string-append base-path "/view"))
-         (file-name (string-append (get-id view) ".scm")))    
-    ;; Serialize and write to file
-    (save-to-dir view-dir file-name (serilize view))))
-
-;; Save block to file storage
-(define-method (save (block <block>) (storage <filest>))
-  (let* ((base-path (get-path storage))
-         (block-dir (string-append base-path "/block"))
-	 (file-name (string-append (get-id block) ".scm")))
-    ;; Serialize and write to file
-    (save-to-dir block-dir file-name (serilize block))))
-
 (define-method (read-from-view-path view-path)
   (call-with-input-file view-path
     (lambda (port)

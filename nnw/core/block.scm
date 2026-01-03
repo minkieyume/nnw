@@ -16,7 +16,7 @@
             get-modified
 	    unserilize/block))
 
-(define-class <block> ()
+(define-class <block> (<storable>)
   (id #:init-keyword #:id 
       #:init-thunk generate-string-uuid
       #:getter get-id)

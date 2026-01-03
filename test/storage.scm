@@ -3,6 +3,7 @@
              (nnw core block)
              (nnw core view)
              (nnw core storage)
+	     (nnw core serilize)
              (srfi srfi-64)
              (ice-9 textual-ports)
              (ice-9 ftw))
