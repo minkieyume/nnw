@@ -32,12 +32,12 @@
                 #:content '(("invalid-uuid" . "data")))))
 
 ;; Test view->string method
-(test-group "view->string method"
+(test-group "view->output method"
   (let ((view1 (make <view> #:name "Simple"))
         (view2 (make <view> #:name "中文视图名称")))
     
-    (test-equal "simple name" "Simple" (view->string view1))
-    (test-equal "Chinese name" "中文视图名称" (view->string view2))
-    (test-assert "view->string returns string" (string? (view->string view1)))))
+    (test-equal "simple name" "Simple" (view->output view1))
+    (test-equal "Chinese name" "中文视图名称" (view->output view2))
+    (test-assert "view->string returns string" (string? (view->output view1)))))
 
 (test-end "logs/view-tests")

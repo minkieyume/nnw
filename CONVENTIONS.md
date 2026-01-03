@@ -13,6 +13,8 @@
 - Requirement: Ensure new features include corresponding unit tests.
 - Test Name：All unit test's test-begin or test-ends' names must begin with logs/ ,
   test-group test-error and other functions dosen't follow this rule.
+- Test Conciseness：Test code must be minimized in line count. For each target function, test-group usage is strictly limited to a maximum of 3.
+- Test Scope：Avoid over-testing implementation details. Focus strictly on the function's core capability (e.g., asserting fixed inputs against expected outputs).
 
 4. Reference
 - Documentation Priority: Always prioritize the official Guile Manual (https://www.gnu.org/software/guile/manual/guile.html) as the primary technical reference for syntax and built-in features.
