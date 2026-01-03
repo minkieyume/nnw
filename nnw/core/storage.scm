@@ -9,15 +9,11 @@
 	    <filest>
 	    get-path))
 
-;; Global storage for views and blocks (in-memory for now)
-(define *view-storage* (make-hash-table))
-(define *block-storage* (make-hash-table))
-
 (define-class <storage> ())
 
 (define-class <filest> (<storage>)
   (path #:init-keyword #:path 
-        #:init-value "target/storage" 
+        #:init-value "target/storage"
         #:getter get-path))
 
 ;; Save view to file storage
@@ -47,29 +43,4 @@
         (newline port)))))
 
 ;; Read view from file storage
-(define-method (read-from (view <view>) (storage <filest>))
-  (let* ((base-path (get-path storage))
-         (view-dir (string-append base-path "/view"))
-         (file-path (string-append view-dir "/" (get-id view) ".scm")))
-    ;; Check if file exists
-    (if (file-exists? file-path)
-        ;; Read and deserialize from file
-        (call-with-input-file file-path
-          (lambda (port)
-            (unserilize (read port))))
-        ;; Return #f if file doesn't exist
-        #f)))
-
-;; Read block from file storage
-(define-method (read-from (block <block>) (storage <filest>))
-  (let* ((base-path (get-path storage))
-         (block-dir (string-append base-path "/block"))
-         (file-path (string-append block-dir "/" (get-id block) ".scm")))
-    ;; Check if file exists
-    (if (file-exists? file-path)
-        ;; Read and deserialize from file
-        (call-with-input-file file-path
-          (lambda (port)
-            (unserilize (read port))))
-        ;; Return #f if file doesn't exist
-        #f)))
+(define-method (read-from (id <string>) (storage <filest>)))

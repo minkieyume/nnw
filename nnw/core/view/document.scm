@@ -19,7 +19,7 @@
 ;; Document view: content is an alist of (uuid-string . index-number)
 ;; representing the order of blocks/views
 (define-class <document> (<view>)
-  (type #:init-value "document")
+  (type #:init-value "document" #:getter get-type)
   #:metaclass <document-type>)
 
 ;; Validate that content is an alist with UUID v4 string keys and non-negative integer values

@@ -33,11 +33,11 @@
     
     ;; Store blocks
     (for-each (lambda (block)
-                (hash-set! *block-storage* (get-id block) block))
+		(save block (make <filest>)))
               blocks)
     
     ;; Store view
-    (hash-set! *view-storage* (get-id doc) doc)
+    (save doc (make <filest>))
     
     ;; Return view id
     (get-id doc)))
