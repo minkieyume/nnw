@@ -20,7 +20,7 @@
   (unless (uuid-v4-string? view-id)
     (error "view-id must be a valid UUID v4 string" view-id))
   
-  (let ((view (hash-ref *view-storage* view-id)))
+  (let ((view (read-from view-id (make <filest>))))
     (unless view
       (error "View not found with id" view-id))
     

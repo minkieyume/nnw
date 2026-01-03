@@ -52,16 +52,15 @@
          (sorted-content (sort content (lambda (a b) (< (cdr a) (cdr b)))))
          ;; Get block/view sources in order
          (sources (map (lambda (item)
-                        (let ((id (car item)))
-                          ;; Retrieve block or view by id and get its source/string
-                          (cond
-                           ((hash-ref *block-storage* id)
-                            => (lambda (block) (get-source block)))
-                           ((hash-ref *view-storage* id)
-                            => (lambda (view) (view->string view)))
-                           (else
-                            (error "Block or view not found with id" id)))))
-                      sorted-content)))
+                         (let* ((id (car item))
+				(content (read-from id (make <filest>))))
+                           ;; Retrieve block or view by id and get its source/string
+                           (cond
+                            ((is-a? content <block>) (get-source content))
+			    ((is-a? content <view>) (view->string content))
+                            (else
+                             (error "Block or view not found with id" id)))))
+                       sorted-content)))
     (string-join sources "\n")))
 
 ;; Parse document source into lines (helper function)
