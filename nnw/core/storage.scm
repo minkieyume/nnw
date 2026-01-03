@@ -7,7 +7,8 @@
   #:export (<storage>
 	    <filest>
 	    get-path
-	    save))
+	    save
+	    read))
 
 ;; Global storage for views and blocks (in-memory for now)
 (define *view-storage* (make-hash-table))
@@ -46,4 +47,30 @@
         (write (serilize block) port)
         (newline port)))))
 
-;; TODO 为'storage.scm' 实现 'read' 方法，并
+;; Read view from file storage
+(define-method (read (view <view>) (storage <filest>))
+  (let* ((base-path (get-path storage))
+         (view-dir (string-append base-path "/view"))
+         (file-path (string-append view-dir "/" (get-id view) ".scm")))
+    ;; Check if file exists
+    (if (file-exists? file-path)
+        ;; Read and deserialize from file
+        (call-with-input-file file-path
+          (lambda (port)
+            (unserilize (read port))))
+        ;; Return #f if file doesn't exist
+        #f)))
+
+;; Read block from file storage
+(define-method (read (block <block>) (storage <filest>))
+  (let* ((base-path (get-path storage))
+         (block-dir (string-append base-path "/block"))
+         (file-path (string-append block-dir "/" (get-id block) ".scm")))
+    ;; Check if file exists
+    (if (file-exists? file-path)
+        ;; Read and deserialize from file
+        (call-with-input-file file-path
+          (lambda (port)
+            (unserilize (read port))))
+        ;; Return #f if file doesn't exist
+        #f)))
