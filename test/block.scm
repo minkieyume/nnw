@@ -1,5 +1,6 @@
 (use-modules (oop goops)
 	     (nnw core generic)
+	     (nnw core serilize)
 	     (nnw core block)
              (srfi srfi-64)
              (ice-9 regex))
@@ -247,7 +248,7 @@
     '(block
       (id "54fe7506-d6b1-4bf5-96b4-4b5aeeabcfbb")
       (description "desc")
-      (source "")
+      (source "source")
       (type "block")
       (tags ("tag1"))
       (hash "9da714991d02513b3a81e1e820a22e2ee841dc794ce74a796edb9eec51b7b94c")
@@ -256,22 +257,24 @@
       (modified "2024-01-01")))
   
   (test-equal "can unserilize"
-    (unserilize '(block
-		  (id "54fe7506-d6b1-4bf5-96b4-4b5aeeabcfbb")
-		  (description "desc")
-		  (source "")
-		  (type "block")
-		  (tags ("tag1"))
-		  (hash "9da714991d02513b3a81e1e820a22e2ee841dc794ce74a796edb9eec51b7b94c")
-		  (metadata ())
-		  (created "2024-01-01")
-		  (modified "2024-01-01")))
-    (make <block>
-      #:id "54fe7506-d6b1-4bf5-96b4-4b5aeeabcfbb"
-      #:description "desc"
-      #:source "source"
-      #:tags '("tag1")
-      #:created "2024-01-01"
-      #:modified "2024-01-01")))
+    (get-hash
+     (unserilize '(block
+		   (id "54fe7506-d6b1-4bf5-96b4-4b5aeeabcfbb")
+		   (description "desc")
+		   (source "source")
+		   (type "block")
+		   (tags ("tag1"))
+		   (hash "9da714991d02513b3a81e1e820a22e2ee841dc794ce74a796edb9eec51b7b94c")
+		   (metadata ())
+		   (created "2024-01-01")
+		   (modified "2024-01-01"))))
+    (get-hash
+     (make <block>
+       #:id "54fe7506-d6b1-4bf5-96b4-4b5aeeabcfbb"
+       #:description "desc"
+       #:source "source"
+       #:tags '("tag1")
+       #:created "2024-01-01"
+       #:modified "2024-01-01"))))
 
 (test-end "logs/block-tests")

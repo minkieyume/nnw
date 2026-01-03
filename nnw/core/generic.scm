@@ -6,7 +6,7 @@
 	    serilize
 	    unserilize
 	    save
-	    read))
+	    read-from))
 
 (define-generic get-id)
 
@@ -20,4 +20,6 @@
 
 (define-generic save)
 
-(define-generic read)
+(define-generic read-from)
+
+(define-generic string->class)

@@ -1,14 +1,13 @@
 (define-module (nnw core storage)
   #:use-module (nnw core generic)
+  #:use-module (nnw core serilize)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
   #:use-module (oop goops)
   #:use-module (ice-9 textual-ports)
   #:export (<storage>
 	    <filest>
-	    get-path
-	    save
-	    read))
+	    get-path))
 
 ;; Global storage for views and blocks (in-memory for now)
 (define *view-storage* (make-hash-table))
@@ -48,7 +47,7 @@
         (newline port)))))
 
 ;; Read view from file storage
-(define-method (read (view <view>) (storage <filest>))
+(define-method (read-from (view <view>) (storage <filest>))
   (let* ((base-path (get-path storage))
          (view-dir (string-append base-path "/view"))
          (file-path (string-append view-dir "/" (get-id view) ".scm")))
@@ -62,7 +61,7 @@
         #f)))
 
 ;; Read block from file storage
-(define-method (read (block <block>) (storage <filest>))
+(define-method (read-from (block <block>) (storage <filest>))
   (let* ((base-path (get-path storage))
          (block-dir (string-append base-path "/block"))
          (file-path (string-append block-dir "/" (get-id block) ".scm")))

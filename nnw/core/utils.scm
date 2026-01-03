@@ -1,5 +1,6 @@
 (define-module (nnw core utils)
   #:use-module (nnw core generic)
+  #:use-module (oop goops)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 regex)
   #:use-module (ice-9 format)

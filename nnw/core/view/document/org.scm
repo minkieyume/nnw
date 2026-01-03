@@ -1,4 +1,4 @@
-(define-module (nnw core view org)
+(define-module (nnw core view document org)
   #:use-module (nnw core generic)
   #:use-module (nnw core view)
   #:use-module (nnw core view document)
