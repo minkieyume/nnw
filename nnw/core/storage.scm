@@ -7,7 +7,8 @@
   #:use-module (ice-9 textual-ports)
   #:export (<storage>
 	    <filest>
-	    get-path))
+	    get-path
+	    read-from))
 
 (define-class <storage> ())
 
@@ -42,5 +43,23 @@
         (write (serilize block) port)
         (newline port)))))
 
-;; TODO 更新read-from代码，确保其能正确通过搜索view和block的路径，实现反序列化并返回值。如果找不到对应id的文件返回#f。
-(define-method (read-from (id <string>) (storage <filest>)))
+;; Read and deserialize object from file storage by ID
+(define-method (read-from (id <string>) (storage <filest>))
+  (let* ((base-path (get-path storage))
+         (view-path (string-append base-path "/view/" id ".scm"))
+         (block-path (string-append base-path "/block/" id ".scm")))
+    (cond
+     ;; Try to read from view directory first
+     ((file-exists? view-path)
+      (call-with-input-file view-path
+        (lambda (port)
+          (let ((data (read port)))
+            (unserilize data)))))
+     ;; Then try block directory
+     ((file-exists? block-path)
+      (call-with-input-file block-path
+        (lambda (port)
+          (let ((data (read port)))
+            (unserilize data)))))
+     ;; If neither exists, return #f
+     (else #f))))
