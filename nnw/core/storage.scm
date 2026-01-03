@@ -4,7 +4,8 @@
   #:use-module (ice-9 textual-ports)
   #:export (<storage>
 	    <filest>
-	    get-path))
+	    get-path
+	    save))
 
 ;; Global storage for views and blocks (in-memory for now)
 (define *view-storage* (make-hash-table))
