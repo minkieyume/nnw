@@ -1,9 +1,9 @@
 (define-module (nnw core view document)
   #:use-module (nnw core generic)
+  #:use-module (nnw core storage)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
   #:use-module (nnw core utils)
-  #:use-module (nnw core input)
   #:use-module (oop goops)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
@@ -75,10 +75,9 @@
 	(else
 	 (let ((timestamp (current-timestamp)))
 	   (cons
-	    (make <block>
+	    (make <text>
 	      #:description (string-append "Block " (number->string (+ index 1)))
 	      #:source (car sources)
-	      #:type "text"
 	      #:tags tags
 	      #:created timestamp
 	      #:modified timestamp)

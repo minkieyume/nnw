@@ -1,5 +1,6 @@
 (define-module (nnw core input)
   #:use-module (nnw core generic)
+  #:use-module (nnw core storage)
   #:use-module (nnw core block)
   #:use-module (nnw core view)
   #:use-module (nnw core view document)
@@ -9,13 +10,7 @@
   #:use-module (ice-9 regex)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-19)
-  #:export (nnw-input
-            *view-storage*
-            *block-storage*))
-
-;; Global storage for views and blocks (in-memory for now)
-(define *view-storage* (make-hash-table))
-(define *block-storage* (make-hash-table))
+  #:export (nnw-input))
 
 ;; Input entry point
 (define* (nnw-input source 
@@ -29,16 +24,16 @@
   
   ;; Parse document source using parser module
   (let* ((parse-result (parse source <document>
-                              #:tags tags
-                              #:view-id view-id
-                              #:view-name view-name
-                              #:view-metadata view-metadata))
+                              (list #:tags tags
+				    #:view-id view-id
+				    #:view-name view-name
+				    #:view-metadata view-metadata)))
          (doc (car parse-result))
          (blocks (cdr parse-result)))
     
     ;; Store blocks
     (for-each (lambda (block)
-                (hash-set! *block-storage* (block-id block) block))
+                (hash-set! *block-storage* (get-id block) block))
               blocks)
     
     ;; Store view

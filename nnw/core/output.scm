@@ -1,5 +1,6 @@
 (define-module (nnw core output)
   #:use-module (nnw core generic)
+  #:use-module (nnw core storage)
   #:use-module (nnw core block)
   #:use-module (nnw core view)
   #:use-module (nnw core view document)

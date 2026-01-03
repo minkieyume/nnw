@@ -11,7 +11,6 @@
   (let ((block (make <block>
                 #:description "Test block"
                 #:source "test-source.txt"
-                #:type "text"
                 #:tags '("tag1" "tag2")
                 #:created "2024-01-01"
                 #:modified "2024-01-02")))
@@ -19,7 +18,6 @@
     (test-assert "block is created" (is-a? block <block>))
     (test-equal "description is set" "Test block" (get-description block))
     (test-equal "source is set" "test-source.txt" (get-source block))
-    (test-equal "type is set" "text" (get-type block))
     (test-equal "tags are set" '("tag1" "tag2") (get-tags block))
     (test-equal "created is set" "2024-01-01" (get-created block))
     (test-equal "modified is set" "2024-01-02" (get-modified block))
@@ -31,14 +29,12 @@
   (let* ((block1 (make <block>
                   #:description "Block 1"
                   #:source "source"
-                  #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01"))
          (block2 (make <block>
                   #:description "Block 2"
                   #:source "source"
-                  #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01")))
@@ -51,7 +47,6 @@
   (let ((block (make <block>
                 #:description "Block with no tags"
                 #:source "source"
-                #:type "text"
                 #:tags '()
                 #:created "2024-01-01"
                 #:modified "2024-01-01")))
@@ -66,29 +61,6 @@
               (make <block>
                #:description 123
                #:source "source"
-               #:type "text"
-               #:tags '()
-               #:created "2024-01-01"
-               #:modified "2024-01-01")))
-
-;; Test type validation: source must be a string
-(test-group "type validation - source"
-  (test-error "source must be string"
-              (make <block>
-               #:description "desc"
-               #:source 123
-               #:type "text"
-               #:tags '()
-               #:created "2024-01-01"
-               #:modified "2024-01-01")))
-
-;; Test type validation: type must be a string
-(test-group "type validation - type"
-  (test-error "type must be string"
-              (make <block>
-               #:description "desc"
-               #:source "source"
-               #:type 123
                #:tags '()
                #:created "2024-01-01"
                #:modified "2024-01-01")))
@@ -99,7 +71,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags "not-a-list"
                #:created "2024-01-01"
                #:modified "2024-01-01"))
@@ -108,7 +79,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags '("tag1" 123 "tag2")
                #:created "2024-01-01"
                #:modified "2024-01-01")))
@@ -119,7 +89,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags '()
                #:created 20240101
                #:modified "2024-01-01")))
@@ -130,7 +99,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags '()
                #:created "2024-01-01"
                #:modified 20240101)))
@@ -140,7 +108,6 @@
   (let ((block (make <block>
                 #:description "Hash test"
                 #:source "test-source"
-                #:type "text"
                 #:tags '("tag1" "tag2")
                 #:created "2024-01-01"
                 #:modified "2024-01-01")))
@@ -155,14 +122,12 @@
   (let* ((block1 (make <block>
                   #:description "Block 1"
                   #:source "same-source"
-                  #:type "text"
                   #:tags '("tag1" "tag2")
                   #:created "2024-01-01"
                   #:modified "2024-01-01"))
          (block2 (make <block>
                   #:description "Block 2"
                   #:source "same-source"
-                  #:type "text"
                   #:tags '("tag1" "tag2")
                   #:created "2024-01-01"
                   #:modified "2024-01-01")))
@@ -176,21 +141,18 @@
   (let* ((block1 (make <block>
                   #:description "Block 1"
                   #:source "source1"
-                  #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01"))
          (block2 (make <block>
                   #:description "Block 2"
                   #:source "source2"
-                  #:type "text"
                   #:tags '("tag1")
                   #:created "2024-01-01"
                   #:modified "2024-01-01"))
          (block3 (make <block>
                   #:description "Block 3"
                   #:source "source1"
-                  #:type "text"
                   #:tags '("tag2")
                   #:created "2024-01-01"
                   #:modified "2024-01-01")))
@@ -205,7 +167,6 @@
   (let ((block (make <block>
                 #:description "Metadata test"
                 #:source "source"
-                #:type "text"
                 #:tags '("tag1")
                 #:created "2024-01-01"
                 #:modified "2024-01-01"
@@ -222,7 +183,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags '("tag1")
                #:created "2024-01-01"
                #:modified "2024-01-01"
@@ -232,7 +192,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:tags '("tag1")
                #:created "2024-01-01"
                #:modified "2024-01-01"
@@ -243,7 +202,6 @@
   (test-error "missing description raises error"
               (make <block>
                #:source "source"
-               #:type "text"
                #:tags '("tag1")
                #:created "2024-01-01"
                #:modified "2024-01-01"))
@@ -251,15 +209,6 @@
   (test-error "missing source raises error"
               (make <block>
                #:description "desc"
-               #:type "text"
-               #:tags '("tag1")
-               #:created "2024-01-01"
-               #:modified "2024-01-01"))
-  
-  (test-error "missing type raises error"
-              (make <block>
-               #:description "desc"
-               #:source "source"
                #:tags '("tag1")
                #:created "2024-01-01"
                #:modified "2024-01-01"))
@@ -268,7 +217,6 @@
               (make <block>
                #:description "desc"
                #:source "source"
-               #:type "text"
                #:created "2024-01-01"
                #:modified "2024-01-01"))
   
