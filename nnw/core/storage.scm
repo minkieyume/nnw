@@ -2,9 +2,7 @@
   #:use-module (nnw core generic)
   #:use-module (oop goops)
   #:use-module (ice-9 textual-ports)
-  #:export (*view-storage*
-	    *block-storage*
-	    <storage>
+  #:export (<storage>
 	    <filest>
 	    get-path))
 
