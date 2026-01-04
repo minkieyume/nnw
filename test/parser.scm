@@ -18,19 +18,21 @@
 ;;     (test-assert "car parsed is document" (is-a? (car parsed) <view>))
 ;;     (test-assert "cdr parsed all is block" (every (lambda (b) (is-a? b <block>)) (cdr parsed)))))
 
-;; TODO 将下面的单元测试改为sxml match匹配。
 (test-group "parse-text basic functionality"
   (let ((result (parse-text "line1\nline2\n\nline3")))
-    (sxml-match result
-      ((view (@ (type "document")
-                (name "Untitled Document"))
-             (block (@ (type "text")) (p ,line1))
-             (block (@ (type "text")) (p ,line2))
-             (block (@ (type "text")) (p ,line3)))
-       (test-equal "first block content" "line1" line1)
-       (test-equal "second block content" "line2" line2)
-       (test-equal "third block content" "line3" line3))
-      (else
-       (test-assert "sxml match failed" #f)))))
+    (sxml-match-let (((view (@ (type ,tv)
+			       (name ,nv))
+		       (block (@ (type ,tb1)) (p ,line1))
+		       (block (@ (type ,tb2)) (p ,line2))
+		       (block (@ (type ,tb3)) (p ,line3)))
+		     result))
+		    (test-equal "first block content" "line1" line1)
+		    (test-equal "second block content" "line2" line2)
+		    (test-equal "third block content" "line3" line3)
+		    (test-equal "first block type" "text" tb1)
+		    (test-equal "second block type" "text" tb2)
+		    (test-equal "third block type" "text" tb3)
+		    (test-equal "View Type" "document" tv)
+		    (test-equal "View Name" "Untitled Document" nv))))
 
 (test-end "logs/nnwio")

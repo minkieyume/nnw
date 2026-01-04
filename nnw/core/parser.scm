@@ -2,32 +2,35 @@
   #:use-module (nnw core generic)
   #:use-module (nnw core utils)
   #:use-module (nnw core view)
+  #:use-module (nnw core type)
   #:use-module (oop goops)
-  #:export ())
+  #:use-module (sxml match)
+  #:export (parse-text))
 
-(define example-input-sxml
-  '(view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")
-	    (type "document")
-	    (name "the view")
-	    ;; ... metadata)
-	    (block (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") ;optional
-		      (type "text")
-		      (tags "tag1 tag2 tag3") ;optional
-		      (description "")	      ;optional
-		      (created "")	      ;optional
-		      (modified "")	      ;optional
-		      ;; ... metadata
-		      )
-		   (p "This is a text."))
-	    (view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") (type "document")
-		     ;; ... metadata
-		     )
-		  (block (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") ;optional
-			    (type "text")
-			    (tags "tag1 tag2") ;optional
-			    (description "")	      ;optional
-			    (created "")	      ;optional
-			    (modified "")	      ;optional
-			    ;; ... metadata
-			    )
-			 (p "text is there"))))))
+(define-method (input->views+blocks (input <list>))
+  (let ((type (sxml-match input
+		((view (@ (type ,type) . ,otr) . ,children)
+		 type))))
+    (input->views+blocks input (string->view-type type))))
+
+(define (parse-text-block tags lines)
+  (map (lambda (line)
+    `(block (@ (type "text")
+	       ,@(if (not (null? tags))
+		     `((tags ,(string-join tags " ")))
+		     '()))
+	    (p ,line))) lines))
+
+(define* (parse-text source #:key (tags '())
+                                 (view-id #f)
+				 (view-type "document")
+				 (view-name "Untitled Document")
+				 (view-metadata '()))
+  (let* ((lines (filter (lambda (line) (not (string=? line "")))
+			(string-split source #\newline)))
+	 (blocks (parse-text-block tags lines)))
+    `(view (@ (type ,view-type)
+              (name ,view-name)
+	      ,@view-metadata
+	      ,@(if view-id `(id ,view-id) '()))
+           ,@blocks)))

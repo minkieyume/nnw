@@ -6,7 +6,9 @@
   #:use-module (oop goops)
   #:use-module (ice-9 match)
   #:export (symbol->view-type
-	    symbol->block-type))
+	    symbol->block-type
+	    string->view-type
+	    string->block-type))
 
 (define (symbol->view-type symb)
   (match symb
@@ -17,3 +19,9 @@
   (match symb
     ('block <block>)
     ('text <text>)))
+
+(define (string->view-type str)
+  (symbol->view-type (string->symbol str)))
+
+(define (string->block-type str)
+  (symbol->block-type (string->symbol str)))

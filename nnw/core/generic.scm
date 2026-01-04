@@ -20,5 +20,7 @@
 
 (define-generic read-from)
 
+(define-generic input->views+blocks)
+
 (define-class <storable> ()
   (id #:getter get-id))

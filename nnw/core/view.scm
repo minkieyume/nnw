@@ -26,6 +26,8 @@
   (content #:init-keyword #:content #:init-value '() #:getter get-content)
   #:metaclass <view-type>)
 
+(define-generic make-view)
+
 (define-generic view->output)
 
 ;; Format a view to a string
@@ -34,10 +36,8 @@
 
 (define-method (view->output (view <view>)))
 
-(define-generic sxml->view)
-
-(define-method (sxml->view input (view-type <view-type>))
-  (make view-type))
+(define-method (input->views+blocks (input <list>) (view-type <view-type>))
+  (cons (make view-type #:name "View") '()))
 
 (define-generic parse)
 
