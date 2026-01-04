@@ -21,28 +21,17 @@
 ;; TODO 将下面的单元测试改为sxml match匹配。
 (test-group "parse-text basic functionality"
   (let ((result (parse-text "line1\nline2\n\nline3")))
-    (test-equal "should create view with correct structure"
-                'view
-                (car result))
-    
-    (test-equal "should filter empty lines and create 3 blocks"
-                3
-                (length (cddr result)))
-    
-    (test-equal "should set default view type"
-                "document"
-                (cadr (assoc 'type (cadr result))))
-    
-    (test-equal "should set default view name"
-                "Untitled Document"
-                (cadr (assoc 'name (cadr result))))
-    
-    (test-equal "first block should contain line1"
-                "line1"
-                (caddr (caddr result)))
-    
-    (test-equal "blocks should have text type"
-                "text"
-                (cadr (assoc 'type (cadr (caddr result)))))))
+    (sxml-match result
+      ((view (@ (type "document")
+                (name "Untitled Document"))
+             (block (@ (type "text")) (p ,line1))
+             (block (@ (type "text")) (p ,line2))
+             (block (@ (type "text")) (p ,line3)))
+       (test-assert "sxml match successful" #t)
+       (test-equal "first block content" "line1" line1)
+       (test-equal "second block content" "line2" line2)
+       (test-equal "third block content" "line3" line3))
+      (else
+       (test-assert "sxml match failed" #f)))))
 
 (test-end "logs/nnwio")
