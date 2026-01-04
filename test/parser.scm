@@ -27,7 +27,6 @@
              (block (@ (type "text")) (p ,line1))
              (block (@ (type "text")) (p ,line2))
              (block (@ (type "text")) (p ,line3)))
-       (test-assert "sxml match successful" #t)
        (test-equal "first block content" "line1" line1)
        (test-equal "second block content" "line2" line2)
        (test-equal "third block content" "line3" line3))
