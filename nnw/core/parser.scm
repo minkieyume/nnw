@@ -7,10 +7,20 @@
   #:use-module (sxml match)
   #:export (parse-text))
 
+(define (replace-input-view view)
+  (if (equal? (car view) 'view)
+      '(view-blocks ,(input->views+blocks view))
+      view))
+
+(define (replace-input-views input)
+  (sxml-match-let (((view . ,children)
+		    input))
+    (let ((modified-children (map replace-input-view children)))
+      `(view ,@children))))
+
 (define-method (input->views+blocks (input <list>))
-  (let ((type (sxml-match input
-		((view (@ (type ,type) . ,otr) . ,children)
-		 type))))
+  (sxml-match-let (((view (@ (type ,type) . ,otr) . ,children)
+		    (replace-input-view input)))
     (input->views+blocks input (string->view-type type))))
 
 (define (parse-text-block tags lines)
@@ -22,10 +32,10 @@
 	    (p ,line))) lines))
 
 (define* (parse-text source #:key (tags '())
-                                 (view-id #f)
-				 (view-type "document")
-				 (view-name "Untitled Document")
-				 (view-metadata '()))
+                                  (view-id #f)
+				  (view-type "document")
+				  (view-name "Untitled Document")
+				  (view-metadata '()))
   (let* ((lines (filter (lambda (line) (not (string=? line "")))
 			(string-split source #\newline)))
 	 (blocks (parse-text-block tags lines)))

@@ -12,7 +12,11 @@
 	    view->output
 	    sxml->view
 	    valid-content?
-	    parse))
+	    fold-view-blocks
+	    view-metadata-symbol-filter
+	    parse
+	    filter-view-blocks
+	    filter-blocks))
 
 (define-class <view-type> (<class>))
 
@@ -37,7 +41,7 @@
 (define-method (view->output (view <view>)))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
-  (cons (make view-type #:name "View") '()))
+  (cons (list (make view-type #:name "View")) '()))
 
 (define-generic parse)
 
@@ -47,6 +51,20 @@
 
 (define-method (parse (source <string>) (view-type <view-type>))
   (parse source view-type '()))
+
+(define (view-metadata-symbol-filter data)
+  (not (member (car data) ('id 'name 'type 'tags 'description 'created 'modified))))
+
+(define (filter-blocks children)
+  (filter (lambda (c) (if (equal? (car c) 'block) #t #f)) children))
+
+(define (filter-view-blocks children)
+  (filter (lambda (c) (if (equal? (car c) 'view-blocks) #t #f)) children))
+
+(define (fold-view-blocks . view-blocks)
+  (fold (lambda (pair acc)
+	  (cons (append (car pair) (car acc))
+		(append (cdr pair) (cdr acc)))) '(() . ()) view-blocks))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)
