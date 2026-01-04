@@ -3,6 +3,7 @@
   #:export (get-id
 	    get-metadata
 	    get-type
+	    get-content
 	    save
 	    read-from
 	    <storable>))
@@ -12,6 +13,8 @@
 (define-generic get-metadata)
 
 (define-generic get-type)
+
+(define-generic get-content)
 
 (define-generic save)
 

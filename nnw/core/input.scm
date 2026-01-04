@@ -13,14 +13,14 @@
   #:export (nnw-input))
 
 ;; Input entry point
-(define* (nnw-input source 
-                    #:key 
-                    (tags '())
-                    (view-id #f)
-                    (view-type "document")
-                    (view-name "Untitled Document")
-                    (view-metadata '()))
-  "Parse and store a document view with its blocks"
+(define* (nnw-input source #:key (storage (make <filest>))
+		                 (parser '())
+		                 (tags '())
+                                 (view-id #f)
+				 (view-type "document")
+				 (view-name "Untitled Document")
+				 (view-metadata '()))
+  "Parse and store a view and its blocks"
   
   ;; Parse document source using parser module
   (let* ((parse-result (parse source <document>
@@ -33,11 +33,11 @@
     
     ;; Store blocks
     (for-each (lambda (block)
-		(save block (make <filest>)))
+		(save block storage))
               blocks)
     
     ;; Store view
-    (save doc (make <filest>))
+    (save doc storage)
     
     ;; Return view id
     (get-id doc)))

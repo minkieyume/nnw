@@ -18,7 +18,7 @@
 ;; Document view: content is an alist of (uuid-string . index-number)
 ;; representing the order of blocks/views
 (define-class <document> (<view>)
-  (type #:init-value "document" #:getter get-type)
+  (type #:init-value 'document #:getter get-type)
   #:metaclass <document-type>)
 
 ;; Validate that content is an alist with UUID v4 string keys and non-negative integer values
@@ -62,7 +62,7 @@
 	   (cons
 	    (make <text>
 	      #:description (string-append "Block " (number->string (+ index 1)))
-	      #:source (car sources)
+	      #:content (car sources)
 	      #:tags tags
 	      #:created timestamp
 	      #:modified timestamp)

@@ -8,9 +8,9 @@
   #:use-module (ice-9 optargs)
   #:export (<view>
 	    <view-type>
-	    get-name
-	    get-content
+	    get-name	    
 	    view->output
+	    sxml->view
 	    valid-content?
 	    parse))
 
@@ -21,7 +21,7 @@
       #:init-thunk generate-string-uuid
       #:getter get-id)
   (name #:init-keyword #:name #:getter get-name)
-  (type #:init-value "view" #:getter get-type)
+  (type #:init-value 'view #:getter get-type)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
   (content #:init-keyword #:content #:init-value '() #:getter get-content)
   #:metaclass <view-type>)
@@ -31,6 +31,13 @@
 ;; Format a view to a string
 (define-method (view->output (view <view>))
   (get-name view))
+
+(define-method (view->output (view <view>)))
+
+(define-generic sxml->view)
+
+(define-method (sxml->view input (view-type <view-type>))
+  (make view-type))
 
 (define-generic parse)
 

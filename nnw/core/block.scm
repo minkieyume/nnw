@@ -2,14 +2,14 @@
   #:use-module (nnw core generic)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
-  #:use-module (uuid generate)  
+  #:use-module (uuid generate)
+  #:use-module (ice-9 match)
   #:use-module (ice-9 iconv)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 optargs)
   #:export (<block>
 	    <text>
             get-description
-            get-source            
             get-tags
             get-hash
             get-created
@@ -21,8 +21,8 @@
       #:init-thunk generate-string-uuid
       #:getter get-id)
   (description #:init-keyword #:description #:getter get-description)
-  (source #:init-keyword #:source #:getter get-source)
-  (type #:init-value "block" #:getter get-type)
+  (content #:init-keyword #:content #:getter get-content)
+  (type #:init-value 'block #:getter get-type)
   (tags #:init-keyword #:tags #:getter get-tags)
   (hash #:init-keyword #:hash #:getter get-hash)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
@@ -30,12 +30,14 @@
   (modified #:init-keyword #:modified #:getter get-modified))
 
 (define-class <text> (<block>)
-  (type #:init-value "text" #:getter get-type))
+  (type #:init-value 'text #:getter get-type))
+
+(define-generic block->output)
 
 (define (block-type-checks initargs)
   (let-keywords initargs #f ((id #f)
 			     (description #f)
-                             (source #f)
+                             (content #f)
                              (tags #f)
                              (created #f)
                              (modified #f)
@@ -50,12 +52,6 @@
 		  (error "block description is required"))
 		(unless (string? description)
 		  (error "block description must be a string" description))
-		
-		;; Validate source
-		(unless source
-		  (error "block source is required"))
-		(unless (string? source)
-		  (error "block source must be a string" source))
 		
 		;; Validate tags
 		(unless tags
@@ -89,12 +85,12 @@
   (block-type-checks initargs)
   (let-keywords initargs #f ((id #f)
 			     (description #f)
-                             (source #f)
+                             (content #f)
                              (type #f)
                              (tags #f)
                              (created #f)
                              (modified #f)
                              (metadata '()))
-		;; Generate hash from source and tags
-		(slot-set! block 'hash (apply generate-hash `("," ,source ,@tags))))
+		;; Generate hash from content and tags
+		(slot-set! block 'hash (apply generate-hash `("," ,content ,@tags))))
   (next-method))
