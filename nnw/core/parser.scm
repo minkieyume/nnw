@@ -13,34 +13,48 @@
 	  (cons (append (car pair) (car acc))
 		(append (cdr pair) (cdr acc)))) '(() . ()) view-blocks))
 
-(define (replace-input-view view)
-  (if (equal? (car view) 'view)
-      (sxml-match view
+(define (replace-child child)
+  (if (equal? (car child) 'view)
+      (sxml-match child
 	((view (@ (id ,id) . ,otr) . ,chd)
-	 `(view (@ (id ,id)))))
-      view))
+	 `(view (@ (id ,id))))
+	(,otherwise
+	 `(id ,(input->views+blocks child))))
+      child))
+
+(define (replaced-id-filter child)
+  (if (equal? (car child) 'id)
+      #t
+      #f))
+
+(define (parse-modified-child child)
+  (if (equal? (car child) 'id)
+      (let* ((views-blocks (cadr child))
+	     (view (caar child)))
+	`(view (@ (id ,(get-id view)))))
+      child))
 
 (define (replace-input-views input)
   (sxml-match-let (((view (@ . ,meta) . ,children)
 		    input))
-    (let ((modified-children (map replace-input-view children)))
-      `(view (@ ,@meta) ,@modified-children))))
-
-(define (view-filter view) ;; TODO 后期可能添加ID替代逻辑。
-  (if (equal? (car view) 'view)
-      #t
-      #f))
-
-(define (replace-children children)
-  (map (lambda (view)
-	 (input->views+blocks children))
-       (filter view-filter children)))
+    (let* ((replaced-children (map replace-child children))
+	   (modified-children (map parse-modified-child children))
+	   (views-blocks (map (lambda (child)
+				(cadr child))
+			      (filter replaced-id-filter children))))
+      (cons `(view (@ ,@meta) ,@modified-children)
+	    views-blocks))))
 
 (define-method (input->views+blocks (input <list>))
+  (display "input=")
+  (write input)
+  (newline)
   (sxml-match-let (((view (@ (type ,type) . ,otr) . ,children) input))
-    (let ((views-blocks (replace-children children)))
+    (let* ((replaced-input+views-blocks (replace-input-views input))
+	   (replaced-input (car replaced-input+views-blocks))
+	   (views-blocks (cdr replaced-input+views-blocks)))
       (apply fold-view-blocks
-	     (cons (input->views+blocks (replace-input-views input)
+	     (cons (input->views+blocks replaced-input
 					(string->view-type type))
 		   views-blocks)))))
 
@@ -63,5 +77,5 @@
     `(view (@ (type ,view-type)
               (name ,view-name)
 	      ,@view-metadata
-	      ,@(if view-id `(id ,view-id) '()))
+	      ,@(if view-id `((id ,view-id)) '()))
            ,@blocks)))

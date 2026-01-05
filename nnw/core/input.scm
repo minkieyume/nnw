@@ -15,7 +15,7 @@
 
 ;; Input entry point
 (define* (nnw-input source #:key (storage (make <filest>))
-		                 (parser '())
+		                 (parser parse-text)
 		                 (tags '())
                                  (view-id #f)
 				 (view-type "document")
@@ -24,21 +24,24 @@
   "Parse and store a view and its blocks"
   
   ;; Parse document source using parser module
-  (let* ((parse-result (parse source <document>
-                              (list #:tags tags
-				    #:view-id view-id
-				    #:view-name view-name
-				    #:view-metadata view-metadata)))
-         (doc (car parse-result))
-         (blocks (cdr parse-result)))
+  (let* ((input (parser source #:tags tags
+			       #:view-id view-id
+			       #:view-type view-type
+			       #:view-name view-name
+			       #:view-metadata view-metadata))
+	 (result (input->views+blocks input))
+         (views (car result))
+         (blocks (cdr result)))
     
     ;; Store blocks
     (for-each (lambda (block)
 		(save block storage))
               blocks)
     
-    ;; Store view
-    (save doc storage)
+    ;; Store views
+    (for-each (lambda (view)
+		(save view storage))
+              views)
     
-    ;; Return view id
-    (get-id doc)))
+    ;; Return view's ids
+    (map get-id views)))
