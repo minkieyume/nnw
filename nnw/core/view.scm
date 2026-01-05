@@ -12,7 +12,6 @@
 	    view->output
 	    sxml->view
 	    valid-content?
-	    fold-view-blocks
 	    view-metadata-symbol-filter
 	    parse))
 
@@ -25,7 +24,7 @@
   (name #:init-keyword #:name #:getter get-name)
   (type #:init-value 'view #:getter get-type)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
-  (content #:init-keyword #:content #:init-value '() #:getter get-content)
+  (content #:init-keyword #:content #:init-value '() #:getter get-content #:setter set-content!)
   #:metaclass <view-type>)
 
 (define-generic make-view)
@@ -51,7 +50,7 @@
   (parse source view-type '()))
 
 (define (view-metadata-symbol-filter data)
-  (not (member (car data) ('id 'name 'type))))
+  (not (member (car data) '(id name type))))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)

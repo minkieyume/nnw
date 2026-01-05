@@ -3,9 +3,11 @@
   #:use-module (nnw core utils)
   #:use-module (oop goops)
   #:use-module (uuid generate)
+  #:use-module (sxml match)
+  #:use-module (sxml simple)
+  #:use-module (srfi srfi-1)
   #:use-module (ice-9 match)
   #:use-module (ice-9 iconv)
-  #:use-module (srfi srfi-1)
   #:use-module (ice-9 optargs)
   #:export (<block>
 	    <text>
@@ -15,7 +17,12 @@
             get-created
             get-modified
 	    unserilize/block
-	    block-metadata-symbol-filter))
+	    block-metadata-symbol-filter
+	    input->block
+	    input->block-content
+	    filter-input-block))
+
+(define-class <block-type> (<class>))
 
 (define-class <block> (<storable>)
   (id #:init-keyword #:id 
@@ -28,17 +35,60 @@
   (hash #:init-keyword #:hash #:getter get-hash)
   (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
   (created #:init-keyword #:created #:getter get-created)
-  (modified #:init-keyword #:modified #:getter get-modified))
+  (modified #:init-keyword #:modified #:getter get-modified)
+  #:metaclass <block-type>)
+
+(define-class <text-type> (<block-type>))
 
 (define-class <text> (<block>)
-  (type #:init-value 'text #:getter get-type))
-
-(define-generic block->output)
-
-(define-generic block->output)
+  (type #:init-value 'text #:getter get-type)
+  #:metaclass <text-type>)
 
 (define (block-metadata-symbol-filter data)
-  (not (member (car data) ('id 'type 'tags 'description 'created 'modified))))
+  (not (member (car data) '(id type tags description created modified))))
+
+(define (sxml->text-contents . input-sxmls)
+  (map (lambda (input-sxml)
+	 (sxml-match input-sxml
+	    ((p . ,text) (apply string-append text))))
+       input-sxmls))
+
+(define-generic block->output)
+
+(define-generic input->block-content) ;; block's children -> content
+
+(define-method (input->block-content (input-contents <list>) (block-type <block-type>))
+  (sxml->string input-contents))
+
+(define-method (input->block-content (input-contents <list>) (block-type <text-type>))
+  (apply string-append (apply sxml->text-contents input-contents)))
+
+(define-generic input->block)
+
+(define-method (input->block (input-block <list>) (block-type <block-type>))
+  (sxml-match-let (((block (@ . ,meta) . ,children) input-block))
+    (let ((id (assq-ref meta 'id))
+	  (tags (assq-ref meta 'tags))
+	  (description (assq-ref meta 'description))
+	  (created (assq-ref meta 'created))
+	  (modified (assq-ref meta 'modified))
+	  (timestamp (current-timestamp))
+	  (metadata (filter block-metadata-symbol-filter meta)))
+      ;; (display "Debug: input-block = ")
+      ;; (write input-block)
+      ;; (newline)
+      (apply make `(,block-type ,@(if id `(#:id ,(car id)) '())
+				#:description ,(if description (car description) "")
+				#:content ,(input->block-content children block-type)
+				#:tags ,(if tags (string-split (car tags) #\space) '())
+				#:modified ,(if modified (car modified) timestamp)
+				#:created ,(if created (car created) timestamp)
+				#:metadata ,metadata)))))
+
+(define (filter-input-block input)
+  (filter (lambda (block)
+	    (if (equal? (car block) 'block)
+		#t #f)) input))
 
 (define (block-type-checks initargs)
   (let-keywords initargs #f ((id #f)

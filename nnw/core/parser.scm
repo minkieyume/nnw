@@ -5,6 +5,7 @@
   #:use-module (nnw core type)
   #:use-module (oop goops)
   #:use-module (sxml match)
+  #:use-module (srfi srfi-1)
   #:export (parse-text))
 
 (define (fold-view-blocks . view-blocks)
@@ -15,15 +16,15 @@
 (define (replace-input-view view)
   (if (equal? (car view) 'view)
       (sxml-match view
-	((view (@ (id . ,id) . ,otr) . ,chd)
+	((view (@ (id ,id) . ,otr) . ,chd)
 	 `(view (@ (id ,id)))))
       view))
 
 (define (replace-input-views input)
-  (sxml-match-let (((view . ,children)
+  (sxml-match-let (((view (@ . ,meta) . ,children)
 		    input))
     (let ((modified-children (map replace-input-view children)))
-      `(view ,@modified-children))))
+      `(view (@ ,@meta) ,@modified-children))))
 
 (define (view-filter view) ;; TODO 后期可能添加ID替代逻辑。
   (if (equal? (car view) 'view)
@@ -36,7 +37,7 @@
        (filter view-filter children)))
 
 (define-method (input->views+blocks (input <list>))
-  (sxml-match-let (((view (@ type ,type . ,otr) . ,children) input))
+  (sxml-match-let (((view (@ (type ,type) . ,otr) . ,children) input))
     (let ((views-blocks (replace-children children)))
       (apply fold-view-blocks
 	     (cons (input->views+blocks (replace-input-views input)
