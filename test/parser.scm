@@ -36,3 +36,27 @@
 		    (test-equal "View Name" "Untitled Document" nv))))
 
 (test-end "logs/nnwio")
+
+(test-group "input->views+blocks functionality"
+  (let* ((input-sxml '(view (@ (type "document") (name "Test Document"))
+                           (block (@ (type "text") (description "Block 1")) (p "First line"))
+                           (block (@ (type "text") (description "Block 2")) (p "Second line"))))
+         (result (input->views+blocks input-sxml)))
+    (test-assert "result is a pair" (pair? result))
+    (test-assert "car result is list of views" (list? (car result)))
+    (test-assert "cdr result is list of blocks" (list? (cdr result)))
+    (test-equal "has one view" 1 (length (car result)))
+    (test-equal "has two blocks" 2 (length (cdr result)))
+    (test-assert "view is document type" (is-a? (caar result) <document>))
+    (test-equal "view name matches" "Test Document" (get-name (caar result)))
+    (test-assert "all blocks are text type" (every (lambda (b) (is-a? b <text>)) (cdr result)))))
+
+(test-group "input->views+blocks with nested views"
+  (let* ((input-sxml '(view (@ (type "document") (name "Parent Document"))
+                           (block (@ (type "text")) (p "Parent block"))
+                           (view-blocks ((view (@ (type "document") (name "Child Document"))
+                                              (block (@ (type "text")) (p "Child block")))))))
+         (result (input->views+blocks input-sxml)))
+    (test-assert "result handles nested views" (pair? result))
+    (test-equal "has multiple views" 2 (length (car result)))
+    (test-equal "has multiple blocks" 2 (length (cdr result)))))
