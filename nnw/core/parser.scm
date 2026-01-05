@@ -7,21 +7,41 @@
   #:use-module (sxml match)
   #:export (parse-text))
 
+(define (fold-view-blocks . view-blocks)
+  (fold (lambda (pair acc)
+	  (cons (append (car pair) (car acc))
+		(append (cdr pair) (cdr acc)))) '(() . ()) view-blocks))
+
 (define (replace-input-view view)
   (if (equal? (car view) 'view)
-      '(view-blocks ,(input->views+blocks view))
+      (sxml-match view
+	((view (@ (id . ,id) . ,otr) . ,chd)
+	 `(view (@ (id ,id)))))
       view))
 
 (define (replace-input-views input)
   (sxml-match-let (((view . ,children)
 		    input))
     (let ((modified-children (map replace-input-view children)))
-      `(view ,@children))))
+      `(view ,@modified-children))))
+
+(define (view-filter view) ;; TODO 后期可能添加ID替代逻辑。
+  (if (equal? (car view) 'view)
+      #t
+      #f))
+
+(define (replace-children children)
+  (map (lambda (view)
+	 (input->views+blocks children))
+       (filter view-filter children)))
 
 (define-method (input->views+blocks (input <list>))
-  (sxml-match-let (((view (@ (type ,type) . ,otr) . ,children)
-		    (replace-input-view input)))
-    (input->views+blocks input (string->view-type type))))
+  (sxml-match-let (((view (@ type ,type . ,otr) . ,children) input))
+    (let ((views-blocks (replace-children children)))
+      (apply fold-view-blocks
+	     (cons (input->views+blocks (replace-input-views input)
+					(string->view-type type))
+		   views-blocks)))))
 
 (define (parse-text-block tags lines)
   (map (lambda (line)

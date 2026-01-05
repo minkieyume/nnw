@@ -1,4 +1,4 @@
-(define-module (nnw core type)
+(define-module (nnw core block-type)
   #:use-module (nnw core generic)
   #:use-module (nnw core block)
   #:use-module (oop goops)

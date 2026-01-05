@@ -8,7 +8,7 @@
 	     (srfi srfi-1)
              (srfi srfi-64))
 
-(test-begin "logs/nnwio")
+(test-begin "logs/parser")
 
 ;; (test-group "parse a document"
 ;;   (let* ((view-source "This is a document source in Block 1.\nThis is the second line in Block 2")
@@ -35,8 +35,6 @@
 		    (test-equal "View Type" "document" tv)
 		    (test-equal "View Name" "Untitled Document" nv))))
 
-(test-end "logs/nnwio")
-
 (test-group "input->views+blocks functionality"
   (let* ((input-sxml '(view (@ (type "document") (name "Test Document"))
                            (block (@ (type "text") (description "Block 1")) (p "First line"))
@@ -60,3 +58,5 @@
     (test-assert "result handles nested views" (pair? result))
     (test-equal "has multiple views" 2 (length (car result)))
     (test-equal "has multiple blocks" 2 (length (cdr result)))))
+
+(test-end "logs/parser")

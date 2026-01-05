@@ -14,7 +14,8 @@
             get-hash
             get-created
             get-modified
-	    unserilize/block))
+	    unserilize/block
+	    block-metadata-symbol-filter))
 
 (define-class <block> (<storable>)
   (id #:init-keyword #:id 
@@ -34,6 +35,11 @@
 
 (define-generic block->output)
 
+(define-generic block->output)
+
+(define (block-metadata-symbol-filter data)
+  (not (member (car data) ('id 'type 'tags 'description 'created 'modified))))
+
 (define (block-type-checks initargs)
   (let-keywords initargs #f ((id #f)
 			     (description #f)
@@ -41,44 +47,44 @@
                              (tags #f)
                              (created #f)
                              (modified #f)
-                             (metadata '()))    
-		;; Validate id
-		(when id
-		  (unless (uuid-v4-string? id)
-		    (error "view id must be a valid UUID v4 string" id)))
-		
-		;; Validate description
-		(unless description
-		  (error "block description is required"))
-		(unless (string? description)
-		  (error "block description must be a string" description))
-		
-		;; Validate tags
-		(unless tags
-		  (error "block tags is required"))
-		(unless (list-of-string? tags)
-		  (error "block tags must be a list of strings" tags))
-		
-		;; Validate created
-		(unless created
-		  (error "block created is required"))
-		(unless (string? created)
-		  (error "block created must be a string" created))
-		
-		;; Validate modified
-		(unless modified
-		  (error "block modified is required"))
-		(unless (string? modified)
-		  (error "block modified must be a string" modified))
-		
-		;; Validate metadata
-		(unless (list? metadata)
-		  (error "block metadata must be a list" metadata))
-		(unless (every (lambda (item)
-				 (and (pair? item)
-				      (string? (car item))))
-			       metadata)
-		  (error "block metadata must be an alist with string keys" metadata))))
+                             (metadata '()))
+     ;; Validate id
+     (when id
+       (unless (uuid-v4-string? id)
+	 (error "view id must be a valid UUID v4 string" id)))
+     
+     ;; Validate description
+     (unless description
+       (error "block description is required"))
+     (unless (string? description)
+       (error "block description must be a string" description))
+     
+     ;; Validate tags
+     (unless tags
+       (error "block tags is required"))
+     (unless (list-of-string? tags)
+       (error "block tags must be a list of strings" tags))
+     
+     ;; Validate created
+     (unless created
+       (error "block created is required"))
+     (unless (string? created)
+       (error "block created must be a string" created))
+     
+     ;; Validate modified
+     (unless modified
+       (error "block modified is required"))
+     (unless (string? modified)
+       (error "block modified must be a string" modified))
+     
+     ;; Validate metadata
+     (unless (list? metadata)
+       (error "block metadata must be a list" metadata))
+     (unless (every (lambda (item)
+		      (and (pair? item)
+			   (string? (car item))))
+		    metadata)
+       (error "block metadata must be an alist with string keys" metadata))))
 
 ;; Type checking and initialization for block
 (define-method (initialize (block <block>) initargs)

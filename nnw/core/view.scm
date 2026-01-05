@@ -14,9 +14,7 @@
 	    valid-content?
 	    fold-view-blocks
 	    view-metadata-symbol-filter
-	    parse
-	    filter-view-blocks
-	    filter-blocks))
+	    parse))
 
 (define-class <view-type> (<class>))
 
@@ -53,18 +51,7 @@
   (parse source view-type '()))
 
 (define (view-metadata-symbol-filter data)
-  (not (member (car data) ('id 'name 'type 'tags 'description 'created 'modified))))
-
-(define (filter-blocks children)
-  (filter (lambda (c) (if (equal? (car c) 'block) #t #f)) children))
-
-(define (filter-view-blocks children)
-  (filter (lambda (c) (if (equal? (car c) 'view-blocks) #t #f)) children))
-
-(define (fold-view-blocks . view-blocks)
-  (fold (lambda (pair acc)
-	  (cons (append (car pair) (car acc))
-		(append (cdr pair) (cdr acc)))) '(() . ()) view-blocks))
+  (not (member (car data) ('id 'name 'type))))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)

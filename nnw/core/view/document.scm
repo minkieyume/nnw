@@ -107,7 +107,7 @@
 		    (cons view blocks)))))
 
 (define (input->block input-block)
-  (sxml-match-let (((block (@ ,meta ...) ,children ...) input-block))
+  (sxml-match-let (((block (@ . ,meta) . ,children) input-block))
     (let ((id (assq-ref meta 'id))
 	  (tags (assq-ref meta 'tags))
 	  (description (assq-ref meta 'description))
@@ -124,7 +124,7 @@
 	#:created (if created created timestamp)))))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
-  (sxml-match-let (((view (@ ,meta ...) ,children ...) input))
+  (sxml-match-let (((view (@ . ,meta) . ,children) input))
      (let* ((id (assq-ref meta 'id))
 	    (name (assq-ref meta 'name))
 	    (metadata (filter view-metadata-symbol-filter meta))
@@ -134,6 +134,4 @@
 		    #:name (if name name "")
 		    #:metadata (if metadata metadata '())
 		    #:content (make-document-contents blocks))))
-       (apply fold-view-blocks (cons (cons (list view) blocks)
-				     (map (lambda (view-block) (cadr view-block))
-					  (filter-view-blocks children)))))))
+       (cons (list view) blocks))))

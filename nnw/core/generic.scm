@@ -6,6 +6,7 @@
 	    get-content
 	    save
 	    read-from
+	    input->views+blocks
 	    <storable>))
 
 (define-generic get-id)
