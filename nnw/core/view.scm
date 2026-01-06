@@ -31,8 +31,20 @@
 
 (define-generic view->output)
 
-;; TODO 参考'test/view.scm'，实现view->output方法，要求输出一个能通过测试的sxml格式。
-(define-method (view->output (view <view>)))
+(define-method (view->output (view <view>))
+  (let ((id (get-id view))
+        (name (get-name view))
+        (metadata (get-metadata view))
+        (content (get-content view)))
+    `(view (@ (id ,id)
+              (type "view")
+              (name ,name)
+              ,@(map (lambda (meta)
+                       (list (car meta) (cdr meta)))
+                     metadata))
+           ,@(map (lambda (content-item)
+                    `(ref (@ (id ,(car content-item)))))
+                  content))))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
   (cons (list (make view-type #:name "View")) '()))
