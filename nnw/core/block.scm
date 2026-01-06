@@ -85,22 +85,10 @@
 
 ;; 请帮我将下面方法改成sxml-match + next-method的等价实现。
 (define-method (block->output (text <text>))
-  (let ((id (get-id text))
-        (type (symbol->string (get-type text)))
-        (tags (string-join (get-tags text) " "))
-        (description (get-description text))
-        (created (get-created text))
-        (modified (get-modified text))
-        (metadata (get-metadata text))
-        (content (get-content text)))
-    `(block (@ (id ,id)
-               (type ,type)
-               (tags ,tags)
-               (description ,description)
-               (created ,created)
-               (modified ,modified)
-               ,@metadata)
-            (p ,content))))
+  (let ((base-output (next-method)))
+    (sxml-match base-output
+      ((block (@ . ,attrs) ,content)
+       `(block (@ ,@attrs) (p ,content))))))
 
 (define-generic input->block-content) ;; block's children -> content
 
