@@ -31,10 +31,7 @@
 
 (define-generic view->output)
 
-;; Format a view to a string
-(define-method (view->output (view <view>))
-  (get-name view))
-
+;; TODO 参考'test/view.scm'，实现view->output方法，要求输出一个能通过测试的sxml格式。
 (define-method (view->output (view <view>)))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
