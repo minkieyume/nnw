@@ -3,6 +3,20 @@
   #:use-module (nnw core utils)
   #:use-module (nnw core view)
   #:use-module (oop goops)
-  #:export ())
+  #:use-module (sxml match)
+  #:export (write->text))
 
-;; TODO 完成'write->text'方法，以通过'test/writer.scm'的测试。
+(define-generic write->text)
+
+(define-method (write->text (sxml <list>))
+  (sxml-match sxml
+    ((view (@ . ,attrs) . ,children)
+     (string-join
+      (filter-map (lambda (child)
+                    (sxml-match child
+                      ((ref (@ (id ,id)) ,content)
+                       content)
+                      (,otherwise #f)))
+                  children)
+      "\n"))
+    (,otherwise "")))
