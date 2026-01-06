@@ -68,7 +68,7 @@
 
 (define* (parse-text source #:key (tags '())
                                   (view-id #f)
-				  (view-type "document")
+				  (view-type "list-view")
 				  (view-name "Untitled Document")
 				  (view-metadata '()))
   (let* ((lines (filter (lambda (line) (not (string=? line "")))

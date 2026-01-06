@@ -3,7 +3,6 @@
   #:use-module (nnw core type)
   #:use-module (nnw core block)
   #:use-module (nnw core view)
-  #:use-module (nnw core view document)
   #:use-module (oop goops)
   #:use-module (ice-9 match)
   #:export (serilize

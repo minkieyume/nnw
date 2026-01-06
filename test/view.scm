@@ -1,7 +1,7 @@
 (use-modules (oop goops)
 	     (nnw core generic)
 	     (nnw core view)
-	     (nnw core view document)  ; 添加这行
+	     (nnw core view list-view)  ; 添加这行
 	     (nnw core utils)
              (srfi srfi-64)
 	     (sxml match))
@@ -47,32 +47,32 @@
       (test-equal "same block1 id" "550e8400-e29b-41d4-a716-446655440000" b1id)
       (test-equal "same block1 ctx" '("block1") b1ct))))
 
-;; Test document view->output method
-(test-group "document view->output method"
-  (let ((doc1 (make <document>
+;; Test list-view view->output method
+(test-group "list-view view->output method"
+  (let ((doc1 (make <list-view>
                 #:id "550e8400-e29b-41d4-a716-446655440010"
-                #:name "Test Document"
+                #:name "Test List-View"
                 #:content '(("550e8400-e29b-41d4-a716-446655440011" . 1)
                             ("550e8400-e29b-41d4-a716-446655440012" . 0)))))
     (sxml-match-let (((view (@ (id ,id) (type ,type) (name ,name)) . ,children) (view->output doc1)))
-      (test-equal "document id" "550e8400-e29b-41d4-a716-446655440010" id)
-      (test-equal "document type" "view" type)
-      (test-equal "document name" "Test Document" name)
-      (test-equal "document has two children" 2 (length children))
+      (test-equal "list-view id" "550e8400-e29b-41d4-a716-446655440010" id)
+      (test-equal "list-view type" "view" type)
+      (test-equal "list-view name" "Test List-View" name)
+      (test-equal "list-view has two children" 2 (length children))
       ;; 验证子元素按索引排序（index 0 在前，index 1 在后）
       (sxml-match-let* (((ref (@ (id ,first-id))) (car children))
                         ((ref (@ (id ,second-id))) (cadr children)))
         (test-equal "first child has index 0" "550e8400-e29b-41d4-a716-446655440012" first-id)
         (test-equal "second child has index 1" "550e8400-e29b-41d4-a716-446655440011" second-id))))
 
-  (let ((empty-doc (make <document>
+  (let ((empty-doc (make <list-view>
                      #:id "550e8400-e29b-41d4-a716-446655440013"
-                     #:name "Empty Document"
+                     #:name "Empty List-View"
                      #:content '())))
     (sxml-match-let (((view (@ (id ,id) (type ,type) (name ,name)) . ,children) (view->output empty-doc)))
-      (test-equal "empty document id" "550e8400-e29b-41d4-a716-446655440013" id)
-      (test-equal "empty document name" "Empty Document" name)
-      (test-equal "empty document has no children" '() children))))
+      (test-equal "empty list-view id" "550e8400-e29b-41d4-a716-446655440013" id)
+      (test-equal "empty list-view name" "Empty List-View" name)
+      (test-equal "empty list-view has no children" '() children))))
 
 
 (test-end "logs/view-tests")

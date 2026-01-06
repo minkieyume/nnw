@@ -4,7 +4,7 @@
   #:use-module (nnw core block)
   #:use-module (nnw core parser)
   #:use-module (nnw core view)
-  #:use-module (nnw core view document)
+  #:use-module (nnw core view list-view)
   #:use-module (nnw core utils)
   #:use-module (oop goops)
   #:use-module (ice-9 optargs)
@@ -18,12 +18,12 @@
 		                 (parser parse-text)
 		                 (tags '())
                                  (view-id #f)
-				 (view-type "document")
-				 (view-name "Untitled Document")
+				 (view-type "list-view")
+				 (view-name "Untitled List-View")
 				 (view-metadata '()))
   "Parse and store a view and its blocks"
   
-  ;; Parse document source using parser module
+  ;; Parse list-view source using parser module
   (let* ((input (parser source #:tags tags
 			       #:view-id view-id
 			       #:view-type view-type

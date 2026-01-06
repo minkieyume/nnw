@@ -1,7 +1,7 @@
 (use-modules (oop goops)
              (nnw core generic)
              (nnw core view)
-             (nnw core view document)
+             (nnw core view list-view)
              (nnw core block)
              (nnw core writer)
              (nnw core storage)
@@ -22,7 +22,7 @@
 		   #:tags '("tag1")
 		   #:modified "1111-111-111"
 		   #:created "111-111-11"
-                   #:content "This is a document source in Block 1."))
+                   #:content "This is a list-view source in Block 1."))
          (block2 (make <block>
                    #:id block2-id
 		   #:description ""
@@ -42,7 +42,7 @@
     
     ;; Test write->text
     (test-equal "can write a output->text" 
-                "This is a document source in Block 1.\nThis is the second line in Block 2"
+                "This is a list-view source in Block 1.\nThis is the second line in Block 2"
                 (write->text test-sxml storage))
     
     ;; Clean up test files

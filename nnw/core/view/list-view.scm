@@ -1,4 +1,4 @@
-(define-module (nnw core view document)
+(define-module (nnw core view list-view)
   #:use-module (nnw core generic)
   #:use-module (nnw core view)
   #:use-module (nnw core block)
@@ -8,23 +8,23 @@
   #:use-module (sxml match)
   #:use-module (ice-9 optargs)
   #:use-module (srfi srfi-1)
-  #:export (<document>
-	    <document-type>
-            valid-document-content?
-	    make-document-blocks
-	    make-document-contents
-	    parse-document-source))
+  #:export (<list-view>
+	    <list-view-type>
+            valid-list-view-content?
+	    make-list-view-blocks
+	    make-list-view-contents
+	    parse-list-view-source))
 
-(define-class <document-type> (<view-type>))
+(define-class <list-view-type> (<view-type>))
 
-;; Document view: content is an alist of (uuid-string . index-number)
+;; List-View view: content is an alist of (uuid-string . index-number)
 ;; representing the order of blocks/views
-(define-class <document> (<view>)
-  (type #:init-value 'document #:getter get-type)
-  #:metaclass <document-type>)
+(define-class <list-view> (<view>)
+  (type #:init-value 'list-view #:getter get-type)
+  #:metaclass <list-view-type>)
 
 ;; Validate that content is an alist with UUID v4 string keys and non-negative integer values
-(define (valid-document-content? content)
+(define (valid-list-view-content? content)
   (and (list? content)
        (every (lambda (item)
                 (and (pair? item)
@@ -33,16 +33,16 @@
                      (>= (cdr item) 0)))
               content)))
 
-;; Override initialize to add document-specific content validation
-(define-method (initialize (doc <document>) initargs)
+;; Override initialize to add list-view-specific content validation
+(define-method (initialize (doc <list-view>) initargs)
   (let-keywords initargs #f ((id #f)
                              (name #f)
                              (metadata '())
                              (content '()))
-    ;; Validate document-specific content format
+    ;; Validate list-view-specific content format
     (unless (or (null? content)
-                (valid-document-content? content))
-      (error "document content must be an alist with UUID v4 string keys and non-negative integer values" content)))
+                (valid-list-view-content? content))
+      (error "list-view content must be an alist with UUID v4 string keys and non-negative integer values" content)))
   
   (next-method))
 
@@ -61,7 +61,7 @@
     (< inxa inxb)))
 
 ;; Override view->string to output blocks/views in index order
-(define-method (view->output (doc <document>))
+(define-method (view->output (doc <list-view>))
   ;; (display "doc-content=")
   ;; (write (get-content doc))
   ;; (newline)
@@ -100,5 +100,5 @@
 	      (next-content+blocks children index input->content+blocks #:id (get-id block) #:block block)))
 	   (,otherwise (next-content+blocks children index input->content+blocks))))))
 
-(define-method (make-content+blocks (raw-content <list>) (view-type <document-type>))
+(define-method (make-content+blocks (raw-content <list>) (view-type <list-view-type>))
   (input->content+blocks raw-content))

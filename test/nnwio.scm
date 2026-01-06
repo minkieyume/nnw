@@ -8,12 +8,12 @@
 
 (test-begin "logs/nnwio")
 
-(test-group "input a document and get output"
-  (let ((view-source "This is a document source in Block 1.\nThis is the second line in Block 2"))
+(test-group "input a list-view and get output"
+  (let ((view-source "This is a list-view source in Block 1.\nThis is the second line in Block 2"))
     (nnw-input view-source
-	       #:tags '("document" "test")
+	       #:tags '("list-view" "test")
 	       #:view-id "550e8400-e29b-41d4-a716-446655440002"
-	       #:view-type "document")
+	       #:view-type "list-view")
     (test-equal "same with input and output" view-source (nnw-output "550e8400-e29b-41d4-a716-446655440002"))))
 
 (test-end "logs/nnwio")

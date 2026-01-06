@@ -1,6 +1,6 @@
 (define example-input-sxml
   '(view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")
-	    (type "document")
+	    (type "list-view")
 	    (name "the view")
 	    ;; ... metadata
 	    )
@@ -13,7 +13,7 @@
 		   ;; ... metadata
 		   )
 		(p "This is a text."))
-	 (view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") (type "document")
+	 (view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") (type "list-view")
 		  ;; ... metadata
 		  )
 	       (block (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") ;optional
@@ -28,7 +28,7 @@
 
 (define example-output-sxml
   '(view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")
-	    (type "document")
+	    (type "list-view")
 	    (name "the view")
 	    ;; ... metadata
 	    )
