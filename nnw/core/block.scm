@@ -83,6 +83,7 @@
                ,@metadata)
             ,content)))
 
+;; 请帮我将下面方法改成sxml-match + next-method的等价实现。
 (define-method (block->output (text <text>))
   (let ((id (get-id text))
         (type (symbol->string (get-type text)))
