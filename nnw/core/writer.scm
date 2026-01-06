@@ -17,6 +17,7 @@
      (else
       (error "Block or View not found with id" id)))))
 
+;; TODO 给该方法添加针对block的处理，同时更改该方法，确保能通过test/writer.scm的测试。
 (define (write->text sxml storage)
   (sxml-match sxml
     ((view (@ . ,attrs) . ,children)
