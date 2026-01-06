@@ -5,11 +5,13 @@
   #:use-module (uuid generate)
   #:use-module (ice-9 regex)
   #:use-module (srfi srfi-1)
+  #:use-module (sxml match)
   #:use-module (ice-9 optargs)
   #:export (<view>
 	    <view-type>
 	    get-name	    
 	    view->output
+	    make-content+blocks
 	    sxml->view
 	    valid-content?
 	    view-metadata-symbol-filter
@@ -26,6 +28,9 @@
   (metadata #:init-keyword #:metadata #:init-value '() #:getter get-metadata)
   (content #:init-keyword #:content #:init-value '() #:getter get-content #:setter set-content!)
   #:metaclass <view-type>)
+
+(define (view-metadata-symbol-filter data)
+  (not (member (car data) '(id name type))))
 
 (define-generic make-view)
 
@@ -46,20 +51,23 @@
                     `(ref (@ (id ,(car content-item))) ,(cdr content-item)))
                   content))))
 
+(define-generic make-content+blocks)
+
+(define-method (make-content+blocks (raw-content <list>) (view-type <view-type>))
+  '(() . ()))
+
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
-  (cons (list (make view-type #:name "View")) '()))
-
-(define-generic parse)
-
-;; Parse a source string to a view
-(define-method (parse (source <string>) (view-type <view-type>) (parameter <list>))
-  (cons (make view-type #:name "View") '()))
-
-(define-method (parse (source <string>) (view-type <view-type>))
-  (parse source view-type '()))
-
-(define (view-metadata-symbol-filter data)
-  (not (member (car data) '(id name type))))
+  (sxml-match-let (((view (@ . ,meta) . ,children) input))
+     (let* ((id (assq-ref meta 'id))
+	    (name (assq-ref meta 'name))
+	    (metadata (filter view-metadata-symbol-filter meta))
+	    (content+blocks (make-content+blocks children view-type))
+	    (view (apply make `(,view-type
+				,@(if id `(#:id ,(car id)) '())
+				#:name ,(if name (car name) "")
+				#:metadata ,metadata
+				#:content ,(car content+blocks)))))
+       (cons (list view) (cdr content+blocks)))))
 
 ;; Validate that content is an alist with UUID v4 string keys
 (define (valid-content? content)

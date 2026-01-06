@@ -87,7 +87,6 @@
 	    next
 	    (fold-2lst-pairs this next)))))
 
-;; (content . blocks)
 (define* (input->content+blocks children #:optional (index 0))
   ;; (display "children=")
   ;; (write children)
@@ -101,15 +100,5 @@
 	      (next-content+blocks children index input->content+blocks #:id (get-id block) #:block block)))
 	   (,otherwise (next-content+blocks children index input->content+blocks))))))
 
-(define-method (input->views+blocks (input <list>) (view-type <view-type>))
-  (sxml-match-let (((view (@ . ,meta) . ,children) input))
-     (let* ((id (assq-ref meta 'id))
-	    (name (assq-ref meta 'name))
-	    (metadata (filter view-metadata-symbol-filter meta))
-	    (content+blocks (input->content+blocks children))
-	    (view (apply make `(,view-type
-				,@(if id `(#:id ,(car id)) '())
-				#:name ,(if name (car name) "")
-				#:metadata ,metadata
-				#:content ,(car content+blocks)))))
-       (cons (list view) (cdr content+blocks)))))
+(define-method (make-content+blocks (raw-content <list>) (view-type <document-type>))
+  (input->content+blocks raw-content))
