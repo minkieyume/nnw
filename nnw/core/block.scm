@@ -53,16 +53,6 @@
 	    ((p . ,text) (apply string-append text))))
        input-sxmls))
 
-;; TODO 分别针对默认的block，以及text类型的block，完成block->output的实现，要求转成下面这样的格式：
-;; 	       (block (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") ;optional
-		      ;; 	 (type "text")
-		      ;; 	 (tags "tag1 tag2") ;optional
-		      ;; 	 (description "")   ;optional
-		      ;; 	 (created "")       ;optional
-		      ;; 	 (modified "")      ;optional
-		      ;; 	 ;; ... metadata
-		      ;; 	 )
-		      ;; (p "text is there"))
 (define-generic block->output)
 
 (define-method (block->output (block <block>))
@@ -83,7 +73,6 @@
                ,@metadata)
             ,content)))
 
-;; 请帮我将下面方法改成sxml-match + next-method的等价实现。
 (define-method (block->output (text <text>))
   (let ((base-output (next-method)))
     (sxml-match base-output

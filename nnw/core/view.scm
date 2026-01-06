@@ -43,7 +43,7 @@
                        (list (car meta) (cdr meta)))
                      metadata))
            ,@(map (lambda (content-item)
-                    `(ref (@ (id ,(car content-item)))))
+                    `(ref (@ (id ,(car content-item))) ,(cdr content-item)))
                   content))))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))

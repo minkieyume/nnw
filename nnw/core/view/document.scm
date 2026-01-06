@@ -51,63 +51,18 @@
   ;; (display "doc-content=")
   ;; (write (get-content doc))
   ;; (newline)
-  (map car (sort (get-content doc)
-		 (lambda (a b) (< (cdr a) (cdr b))))))
-
-;; Parse document source into lines (helper function)
-(define (parse-document-source source)
-  "Split source by newline and filter empty lines."
-  (let ((lines (string-split source #\newline)))
-    (filter (lambda (s) (not (string=? s ""))) lines)))
-
-(define* (make-document-blocks sources tags #:optional (index 0))
-  (cond ((null? sources) '())
-	(else
-	 (let ((timestamp (current-timestamp)))
-	   (cons
-	    (make <text>
-	      #:description (string-append "Block " (number->string (+ index 1)))
-	      #:content (car sources)
-	      #:tags tags
-	      #:created timestamp
-	      #:modified timestamp)
-	    (make-document-blocks (cdr sources) tags (+ index 1)))))))
-
-(define* (make-document-contents blocks #:optional (index 0))
-  (cond ((null? blocks) '())
-	(else
-	 (cons
-	  (cons (get-id (car blocks)) index)
-	  (make-document-contents (cdr blocks) (+ index 1))))))
-
-;; Parse source string into a document view and its blocks
-(define-method (parse (source <string>) (view-class <document-type>) (parameters <list>))
-  "Parse document source into a document view and its blocks.
-   Parameters is a keyword list that may contain:
-   - #:tags - list of tag strings
-   - #:view-id - UUID v4 string for the view
-   - #:view-name - name string for the view
-   - #:view-metadata - metadata alist for the view
-   Returns a pair (view . blocks)."
-  
-  (let-keywords parameters #f ((tags '())
-                               (view-id #f)
-                               (view-name "Untitled Document")
-                               (view-metadata '()))
-		
-		(let* ((block-sources (parse-document-source source))
-		       (blocks (make-document-blocks block-sources tags))
-		       (content (make-document-contents blocks)))
-		  
-		  ;; Create view instance
-		  (let ((view (make view-class
-				#:id view-id
-				#:name view-name
-				#:metadata view-metadata
-				#:content content)))
-		    
-		    ;; Return pair of (view . blocks)
-		    (cons view blocks)))))
+  (let ((id-list (map car (sort (get-content doc)
+				(lambda (a b) (< (cdr a) (cdr b))))))
+	(last-output (next-method)))
+    (sxml-match last-output
+       ((view (@ . ,m) . ,children)
+	`(view (@ ,@m)
+	       ,@(map (lambda (child)
+			(sxml-match children
+			  ((ref (@ (id ,id)) . ,ot) `(ref (@ (id ,id))))
+			  (,oth child))) 
+		      children)))
+       (,oth last-output))))
 
 (define* (next-content+blocks children index next #:key (id #f) (block #f))
   (let ((next (cond (id (next (cdr children) (+ index 1)))

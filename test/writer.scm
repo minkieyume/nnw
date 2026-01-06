@@ -13,7 +13,7 @@
 (test-begin "logs/writer")
 
 (test-group "write a view to text, get same value"
-  (let* ((storage (make <filest> #:path "test-temp"))
+  (let* ((storage (make <filest> #:path "target/test"))
          (block1-id "550e8400-e29b-41d4-a716-446655440000")
          (block2-id "550e8400-e29b-41d4-a716-446655440001")
          (block1 (make <block> 
@@ -38,6 +38,6 @@
                 (write->text test-sxml storage))
     
     ;; Clean up test files
-    (system "rm -rf test-temp")))
+    (system "rm -rf target/test")))
 
 (test-end "logs/writer")

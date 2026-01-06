@@ -25,3 +25,12 @@
 			 ;; ... metadata
 			 )
 		      (p "text is there")))))
+
+(define example-output-sxml
+  '(view (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")
+	    (type "document")
+	    (name "the view")
+	    ;; ... metadata
+	    )
+	 (ref (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")) "block1")
+	 (ref (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)")) "type1")))
