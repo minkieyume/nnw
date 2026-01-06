@@ -48,7 +48,7 @@
          (block (make <block>
                   #:id "550e8400-e29b-41d4-a716-446655440010"
                   #:description "Test Block"
-                  #:source "test source content"
+                  #:content "test content content"
                   #:tags '("tag1" "tag2")
                   #:created "2024-01-01"
                   #:modified "2024-01-02"))
@@ -92,7 +92,7 @@
          (original-block (make <block>
                            #:id block-id
                            #:description "Test Read Block"
-                           #:source "test source content"
+                           #:content "test content content"
                            #:tags '("tag1" "tag2")
                            #:created "2024-01-01"
                            #:modified "2024-01-02"
@@ -121,7 +121,7 @@
          (original-block (make <block>
                            #:id block-id
                            #:description "Roundtrip Block"
-                           #:source "roundtrip source"
+                           #:content "roundtrip content"
                            #:tags '("round" "trip")
                            #:created "2024-01-01"
                            #:modified "2024-01-02")))
