@@ -13,8 +13,8 @@
   (let ((view (make <view>
                 #:name "Test View"
                 #:metadata '(("key1" . "value1") ("key2" . "value2"))
-                #:content '(("550e8400-e29b-41d4-a716-446655440000" . "block1")
-                            ("550e8400-e29b-41d4-a716-446655440001" . "block2")))))
+                #:content '(("550e8400-e29b-41d4-a716-446655440000" . ("block1"))
+                            ("550e8400-e29b-41d4-a716-446655440001" . ("block2"))))))
     
     (test-assert "view is created" (is-a? view <view>))
     (test-equal "name is set" "Test View" (get-name view))
@@ -38,8 +38,8 @@
   (let ((view1 (make <view>
 		 #:id "550e8400-e29b-41d4-a716-446655440001"
 		 #:name "Test View"
-                 #:content '(("550e8400-e29b-41d4-a716-446655440000" . "block1")
-                             ("550e8400-e29b-41d4-a716-446655440001" . "block2")))))
+                 #:content '(("550e8400-e29b-41d4-a716-446655440000" . ("block1"))
+                             ("550e8400-e29b-41d4-a716-446655440001" . ("block2"))))))
     (sxml-match-let* (((view (@ (id ,id) (type ,type) (name ,name) . ,metadata) . ,children) (view->output view1))
 		      ((ref (@ (id ,b1id)) . ,b1ct) (car children)))
       (test-equal "same id" "550e8400-e29b-41d4-a716-446655440001" id)
@@ -52,8 +52,8 @@
   (let ((doc1 (make <list-view>
                 #:id "550e8400-e29b-41d4-a716-446655440010"
                 #:name "Test List-View"
-                #:content '(("550e8400-e29b-41d4-a716-446655440011" . 1)
-                            ("550e8400-e29b-41d4-a716-446655440012" . 0)))))
+                #:content '(("550e8400-e29b-41d4-a716-446655440011" . (1))
+                            ("550e8400-e29b-41d4-a716-446655440012" . (0))))))
     (sxml-match-let (((view (@ (id ,id) (type ,type) (name ,name)) . ,children) (view->output doc1)))
       (test-equal "list-view id" "550e8400-e29b-41d4-a716-446655440010" id)
       (test-equal "list-view type" "view" type)

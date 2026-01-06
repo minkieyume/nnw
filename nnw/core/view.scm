@@ -48,7 +48,7 @@
                        (list (car meta) (cdr meta)))
                      metadata))
            ,@(map (lambda (content-item)
-                    `(ref (@ (id ,(car content-item))) ,(cdr content-item)))
+                    `(ref (@ (id ,(car content-item))) ,@(cdr content-item)))
                   content))))
 
 (define-generic make-content+blocks)

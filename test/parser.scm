@@ -25,7 +25,7 @@
 		    (test-equal "second block type" "text" tb2)
 		    (test-equal "third block type" "text" tb3)
 		    (test-equal "View Type" "list-view" tv)
-		    (test-equal "View Name" "Untitled List-View" nv))))
+		    (test-equal "View Name" "Untitled Document" nv))))
 
 (test-group "input->views+blocks functionality"
   (let* ((input-sxml '(view (@ (type "list-view") (name "Test List-View"))

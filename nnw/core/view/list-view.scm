@@ -34,21 +34,21 @@
               content)))
 
 ;; Override initialize to add list-view-specific content validation
-(define-method (initialize (doc <list-view>) initargs)
-  (let-keywords initargs #f ((id #f)
-                             (name #f)
-                             (metadata '())
-                             (content '()))
-    ;; Validate list-view-specific content format
-    (unless (or (null? content)
-                (valid-list-view-content? content))
-      (error "list-view content must be an alist with UUID v4 string keys and non-negative integer values" content)))
+;; (define-method (initialize (doc <list-view>) initargs)
+;;   (let-keywords initargs #f ((id #f)
+;;                              (name #f)
+;;                              (metadata '())
+;;                              (content '()))
+;;     ;; Validate list-view-specific content format
+;;     (unless (or (null? content)
+;;                 (valid-list-view-content? content))
+;;       (error "list-view content must be an alist with UUID v4 string keys and non-negative integer values" content)))
   
-  (next-method))
+;;   (next-method))
 
-(define (doc-replace-child child)
+(define (list-view-replace-child child)
   (sxml-match child
-    ((ref (@ (id ,id)) . ,ot) `(ref (@ (id ,id))))
+    ((ref (@ (id ,id)) ,inx . ,ot) `(ref (@ (id ,id)) ,@ot))
     (,oth child)))
 
 (define (doc-context-sorter child-a child-b)
@@ -65,21 +65,19 @@
   ;; (display "doc-content=")
   ;; (write (get-content doc))
   ;; (newline)
-  (let ((id-list (map car (sort (get-content doc)
-				(lambda (a b) (< (cdr a) (cdr b))))))
-	(last-output (next-method)))
+  (let ((last-output (next-method)))
     (sxml-match last-output
        ((view (@ . ,m) . ,children)
 	`(view (@ ,@m)
-	       ,@(map doc-replace-child (sort children doc-context-sorter))))
+	       ,@(map list-view-replace-child (sort children doc-context-sorter))))
        (,oth last-output))))
 
 (define* (next-content+blocks children index next #:key (id #f) (block #f))
   (let ((next (cond (id (next (cdr children) (+ index 1)))
 		    (else (next (cdr children) index))))
-	(this (cond ((and id block) (cons (list (cons id index))
+	(this (cond ((and id block) (cons (list (cons id (list index)))
 					  (list block)))
-		    (id (cons (list (cons id index)) '()))
+		    (id (cons (list (cons id (list index))) '()))
 		    (else '()))))
     (if (null? next)
 	this
