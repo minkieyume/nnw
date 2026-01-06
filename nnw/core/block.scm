@@ -53,6 +53,16 @@
 	    ((p . ,text) (apply string-append text))))
        input-sxmls))
 
+;; TODO 分别针对默认的block，以及text类型的block，完成block->output的实现，要求转成下面这样的格式：
+;; 	       (block (@ (id "xxxx-xxxx-xxxxx-xxxx(uuidv4)") ;optional
+		      ;; 	 (type "text")
+		      ;; 	 (tags "tag1 tag2") ;optional
+		      ;; 	 (description "")   ;optional
+		      ;; 	 (created "")       ;optional
+		      ;; 	 (modified "")      ;optional
+		      ;; 	 ;; ... metadata
+		      ;; 	 )
+		      ;; (p "text is there"))
 (define-generic block->output)
 
 (define-generic input->block-content) ;; block's children -> content
