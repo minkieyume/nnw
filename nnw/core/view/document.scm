@@ -48,6 +48,9 @@
 
 ;; Override view->string to output blocks/views in index order
 (define-method (view->output (doc <document>))
+  ;; (display "doc-content=")
+  ;; (write (get-content doc))
+  ;; (newline)
   (map car (sort (get-content doc)
 		 (lambda (a b) (< (cdr a) (cdr b))))))
 
@@ -106,25 +109,42 @@
 		    ;; Return pair of (view . blocks)
 		    (cons view blocks)))))
 
-(define* (input->content children #:optional (index 0))
+(define* (next-content+blocks children index next #:key (id #f) (block #f))
+  (let ((next (cond (id (next (cdr children) (+ index 1)))
+		    (else (next (cdr children) index))))
+	(this (cond ((and id block) (cons (list (cons id index))
+					  (list block)))
+		    (id (cons (list (cons id index)) '()))
+		    (else '()))))
+    (if (null? next)
+	this
+	(if (null? this)
+	    next
+	    (fold-2lst-pairs this next)))))
+
+;; (content . blocks)
+(define* (input->content+blocks children #:optional (index 0))
+  ;; (display "children=")
+  ;; (write children)
+  ;; (newline)
   (if (null? children) '()
-      (let* ((child (car children))
-	     (id (sxml-match child
-		   ((block (id ,id) . ,otr) id)
-		   (,otherwise #f))))
-	(cond ((not id) (input->content (cdr children) index))
-	      (else (cons (cons id index)
-			  (input->content (cdr children) (+ index 1))))))))
+      (let ((child (car children)))
+	(sxml-match child
+	   ((block (@ (id ,id) . ,otr) . ,chd) (next-content+blocks children index input->content+blocks #:id id))
+	   ((block (@ . ,otr) . ,chd)
+	    (let* ((block (input->block child)))
+	      (next-content+blocks children index input->content+blocks #:id (get-id block) #:block block)))
+	   (,otherwise (next-content+blocks children index input->content+blocks))))))
 
 (define-method (input->views+blocks (input <list>) (view-type <view-type>))
   (sxml-match-let (((view (@ . ,meta) . ,children) input))
      (let* ((id (assq-ref meta 'id))
 	    (name (assq-ref meta 'name))
 	    (metadata (filter view-metadata-symbol-filter meta))
-	    (blocks (map input->block (filter-input-block children)))
+	    (content+blocks (input->content+blocks children))
 	    (view (apply make `(,view-type
 				,@(if id `(#:id ,(car id)) '())
 				#:name ,(if name (car name) "")
 				#:metadata ,metadata
-				#:content ,(input->content children)))))
-       (cons (list view) blocks))))
+				#:content ,(car content+blocks)))))
+       (cons (list view) (cdr content+blocks)))))

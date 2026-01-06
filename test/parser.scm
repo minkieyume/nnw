@@ -47,6 +47,7 @@
     (test-equal "has two blocks" 2 (length (cdr result)))
     (test-assert "view is document type" (is-a? (caar result) <document>))
     (test-equal "view's type is document " 'document (get-type (caar result)))
+    (test-assert "view's content is not null" (not (null? (get-content (caar result)))))
     (test-equal "view name matches" "Test Document" (get-name (caar result)))
     (test-assert "all blocks are text type" (every (lambda (b) (is-a? b <text>)) (cdr result)))
     (test-equal "block's tags match" '("tag1" "tag2" "tag3") (get-tags (cadr result)))))

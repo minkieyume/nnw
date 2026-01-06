@@ -12,7 +12,8 @@
 	    uuid-v4-string?
 	    current-timestamp
 	    generate-hash
-	    save-to-dir))
+	    save-to-dir
+	    fold-2lst-pairs))
 
 (define (list-of-string? lst)
   (and (list? lst)
@@ -47,3 +48,8 @@
     (lambda (port)
       (write context port)
       (newline port))))
+
+(define (fold-2lst-pairs . pairs)
+  (fold (lambda (pair acc)
+	  (cons (append (car pair) (car acc))
+		(append (cdr pair) (cdr acc)))) '(() . ()) pairs))

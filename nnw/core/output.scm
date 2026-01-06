@@ -28,6 +28,9 @@
    "\n"))
 
 (define (output->string output storage)
+  ;; (display "write=")
+  ;; (write output)
+  ;; (newline)
   (cond ((string? output) output)
 	((list-of-string? output) (id-list->string output storage))
 	(else "")))

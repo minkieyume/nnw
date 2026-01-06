@@ -46,9 +46,9 @@
 	    views-blocks))))
 
 (define-method (input->views+blocks (input <list>))
-  (display "input=")
-  (write input)
-  (newline)
+  ;; (display "input=")
+  ;; (write input)
+  ;; (newline)
   (sxml-match-let (((view (@ (type ,type) . ,otr) . ,children) input))
     (let* ((replaced-input+views-blocks (replace-input-views input))
 	   (replaced-input (car replaced-input+views-blocks))
