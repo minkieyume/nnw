@@ -29,5 +29,11 @@
                       (,otherwise #f)))
                   children)
       "\n"))
-    (block)
+    ((block (@ . ,attrs) . ,content)
+     (apply string-append (map (lambda (item)
+                                 (cond
+                                  ((string? item) item)
+                                  ((list? item) (sxml->string item))
+                                  (else "")))
+                               content)))
     (,otherwise "")))
