@@ -16,11 +16,11 @@
             get-hash
             get-created
             get-modified
-	    unserilize/block
 	    block-metadata-symbol-filter
+	    filter-input-block
 	    input->block
 	    input->block-content
-	    filter-input-block))
+	    block->output))
 
 (define-class <block-type> (<class>))
 

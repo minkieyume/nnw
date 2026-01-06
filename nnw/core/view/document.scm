@@ -46,6 +46,20 @@
   
   (next-method))
 
+(define (doc-replace-child child)
+  (sxml-match child
+    ((ref (@ (id ,id)) . ,ot) `(ref (@ (id ,id))))
+    (,oth child)))
+
+(define (doc-context-sorter child-a child-b)
+  (let* ((inxa (sxml-match child-a
+	         ((ref (@ (id ,id)) ,inx . ,otr) inx)
+		 (,oth 0)))
+	 (inxb (sxml-match child-b
+	         ((ref (@ (id ,id)) ,inx . ,otr) inx)
+		 (,oth 1))))
+    (< inxa inxb)))
+
 ;; Override view->string to output blocks/views in index order
 (define-method (view->output (doc <document>))
   ;; (display "doc-content=")
@@ -57,11 +71,7 @@
     (sxml-match last-output
        ((view (@ . ,m) . ,children)
 	`(view (@ ,@m)
-	       ,@(map (lambda (child)
-			(sxml-match children
-			  ((ref (@ (id ,id)) . ,ot) `(ref (@ (id ,id))))
-			  (,oth child))) 
-		      children)))
+	       ,@(map doc-replace-child (sort children doc-context-sorter))))
        (,oth last-output))))
 
 (define* (next-content+blocks children index next #:key (id #f) (block #f))

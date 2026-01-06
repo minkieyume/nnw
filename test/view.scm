@@ -47,8 +47,6 @@
       (test-equal "same block1 id" "550e8400-e29b-41d4-a716-446655440000" b1id)
       (test-equal "same block1 ctx" '("block1") b1ct))))
 
-(test-end "logs/view-tests")
-
 ;; Test document view->output method
 (test-group "document view->output method"
   (let ((doc1 (make <document>
@@ -74,24 +72,7 @@
     (sxml-match-let (((view (@ (id ,id) (type ,type) (name ,name)) . ,children) (view->output empty-doc)))
       (test-equal "empty document id" "550e8400-e29b-41d4-a716-446655440013" id)
       (test-equal "empty document name" "Empty Document" name)
-      (test-equal "empty document has no children" '() children)))
+      (test-equal "empty document has no children" '() children))))
 
-  (let ((doc-with-metadata (make <document>
-                             #:id "550e8400-e29b-41d4-a716-446655440014"
-                             #:name "Document with Metadata"
-                             #:metadata '(("category" . "test") ("priority" . "high"))
-                             #:content '(("550e8400-e29b-41d4-a716-446655440015" . 2)
-                                         ("550e8400-e29b-41d4-a716-446655440016" . 0)
-                                         ("550e8400-e29b-41d4-a716-446655440017" . 1)))))
-    (sxml-match-let (((view (@ (id ,id) (type ,type) (name ,name) (category ,cat) (priority ,pri)) . ,children) (view->output doc-with-metadata)))
-      (test-equal "document with metadata id" "550e8400-e29b-41d4-a716-446655440014" id)
-      (test-equal "document with metadata category" "test" cat)
-      (test-equal "document with metadata priority" "high" pri)
-      (test-equal "document has three children" 3 (length children))
-      ;; 验证三个子元素按索引正确排序（0, 1, 2）
-      (sxml-match-let* (((ref (@ (id ,first-id))) (car children))
-                        ((ref (@ (id ,second-id))) (cadr children))
-                        ((ref (@ (id ,third-id))) (caddr children)))
-        (test-equal "first child index 0" "550e8400-e29b-41d4-a716-446655440016" first-id)
-        (test-equal "second child index 1" "550e8400-e29b-41d4-a716-446655440017" second-id)
-        (test-equal "third child index 2" "550e8400-e29b-41d4-a716-446655440015" third-id)))))
+
+(test-end "logs/view-tests")

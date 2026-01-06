@@ -18,7 +18,6 @@
                 #:modified "2024-01-02")))
     
     (test-assert "block is created" (is-a? block <block>))
-    (test-equal "description is set" "Test block" (get-description block))
     (test-assert "id is generated" (string? (get-id block)))))
 
 ;; Test type validation

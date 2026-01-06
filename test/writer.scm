@@ -18,9 +18,17 @@
          (block2-id "550e8400-e29b-41d4-a716-446655440001")
          (block1 (make <block> 
                    #:id block1-id
+		   #:description ""
+		   #:tags '("tag1")
+		   #:modified "1111-111-111"
+		   #:created "111-111-11"
                    #:content "This is a document source in Block 1."))
          (block2 (make <block>
-                   #:id block2-id  
+                   #:id block2-id
+		   #:description ""
+		   #:tags '("tag1")
+		   #:modified "1111-111-111"
+		   #:created "111-111-11"
                    #:content "This is the second line in Block 2"))
          (test-sxml `(view (@ (id "test-view-id")
                              (type "view")
