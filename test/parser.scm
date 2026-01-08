@@ -4,6 +4,7 @@
 	     (nnw core view list-view)
 	     (nnw core block)	     
 	     (nnw core parser)
+	     (nnw core parser org)
 	     (sxml match)
 	     (srfi srfi-1)
              (srfi srfi-64))
@@ -44,7 +45,38 @@
     (test-assert "all blocks are text type" (every (lambda (b) (is-a? b <text>)) (cdr result)))
     (test-equal "block's tags match" '("tag1" "tag2" "tag3") (get-tags (cadr result)))))
 
-(test-group ""
-  (define orgfile '(document ((__init . #f) (Custome . "custome") (AUTHOR . "Dreamtwi") (title . "Test Title") (__init . #t)) (section ((level . 1) (headline . "A typical org file") (tags "TAG1" "TAG2") (closed . #f)) (section ((level . 2) (headline . "Sections can be nested") (tags) (closed . #f)) (paragraph ((closed . #f)) (text ((closed . #t)) "another paragraph.")) (list ((closed . #t) (last-line-empty . #f) (last-line-empty . #t) (ordered . 1) (indent . 1)) (item ((indent . 1)) (paragraph ((closed . #f)) (text ((closed . #t)) "List item 2"))) (item ((indent . 1)) (paragraph ((closed . #f)) (text ((closed . #t)) "List item 1")))) (drawer ((closed . #t) (arg1 . "test") (header-args . ":tangle src/main.rs") (name . "PROPERTIES") (closed . #f)))) (paragraph ((closed . #t) (closed . #f)) (link ((url . "http://example.com") (description . "example link") (closed . #t))) (text ((closed . #t)) "a paragraph with an ")) (drawer ((closed . #t) (drawer2 . "test1 test2") (drawer1 . ":hello src/hello.rs") (name . "CUSTOM") (closed . #f)))))))
+(test-group "org parser"
+  (define org-text-simple
+"#+title: Test Title
+#+AUTHOR: Dreamtwi
+#+Custome: custome
+* A typical org file :TAG1:TAG2:
+:BLOCK:
+:drawer1: :hello src/hello.rs
+:drawer2: test1 test2
+:tags: tag3 tag4
+:END:
+
+a paragraph with an [[http://example.com][example link]]
+
+** Sections can be nested
+:PROPERTIES:
+:header-args: :tangle src/main.rs
+:arg1: test
+:END:
+ 1. List item 1
+ 2. List item 2
+
+ another paragraph.")
+  (define org-drawer-test
+"* A typical org file :TAG1:TAG2:
+:BLOCK:
+:drawer1: :hello src/hello.rs
+:drawer2: test1 test2
+:tags: tag3 tag4
+:END:
+
+a paragraph with an [[http://example.com][example link]]")
+  (parse-org org-drawer-test))
 
 (test-end "logs/parser")
