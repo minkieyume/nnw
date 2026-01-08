@@ -1,0 +1,12 @@
+(define-module (nnw core view document)
+  #:use-module (nnw core generic)
+  #:use-module (nnw core view)
+  #:use-module (nnw core block)
+  #:use-module (nnw core block-type)
+  #:use-module (nnw core utils)
+  #:use-module (oop goops)
+  #:use-module (sxml match)
+  #:use-module (ice-9 optargs)
+  #:use-module (srfi srfi-1)
+  #:export (<document>
+	    <document-type>))

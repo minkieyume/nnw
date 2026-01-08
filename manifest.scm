@@ -3,4 +3,5 @@
   '(
     "guile"
     "guile-uuid"
-    "guile-gcrypt")))
+    "guile-gcrypt"
+    "guile-orgfile")))
