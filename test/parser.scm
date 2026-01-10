@@ -77,6 +77,6 @@ a paragraph with an [[http://example.com][example link]]
 :END:
 
 a paragraph with an [[http://example.com][example link]]")
-  (parse-org org-drawer-test))
+  (parse-org org-text-simple))
 
 (test-end "logs/parser")
