@@ -1,5 +1,5 @@
 #+TITLE:README
-
+* This branch has moved to [[https://codeberg.org/LittleWingStudio/nnw][Codeberg]]
 * Introduction
 | English | [[file:READMECN.org][中文]] |
 
